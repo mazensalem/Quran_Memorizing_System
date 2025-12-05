@@ -1,0 +1,124 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.SignUp_Page
+@{
+}
+
+@section Styles {
+    <style>
+        .signup-wrapper {
+            max-width: 520px;
+            margin: 60px auto;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .section-divider {
+            width: 70px;
+            height: 3px;
+            background: #333;
+            border-radius: 3px;
+            margin: 10px auto 25px;
+        }
+
+        .admin-box {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #e1e1e1;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+
+        .admin-label {
+            font-weight: 600;
+        }
+
+        .form-control, .form-select {
+            border-radius: 6px;
+        }
+
+        .btn-main {
+            border-radius: 6px;
+            background: #222;
+            color: white;
+        }
+
+        .btn-main:hover {
+            background: #000;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+
+        <div class="signup-wrapper">
+
+            <section class="mb-4">
+                <div class="section-title">Register</div>
+                <div class="section-divider"></div>
+
+                <div class="admin-box">
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="fullname">Full Name</label>
+                        <input type="text" id="fullname" class="form-control" placeholder="Full Name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="email">E-mail</label>
+                        <input type="email" id="email" class="form-control" placeholder="E-mail">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="phone">Phone</label>
+                        <input type="text" id="phone" class="form-control" placeholder="Phone">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="birthdate">Birth Date</label>
+                        <input type="date" id="birthdate" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="admin-label" for="gender">Gender</label>
+                        <select id="gender" class="form-select">
+                            <option selected disabled>Select gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-main w-100 mt-2">
+                        Register
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <a href="/Login_Page">Have an account? Sign In</a>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+</div>
+
