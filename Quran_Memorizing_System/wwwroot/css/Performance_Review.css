@@ -1,0 +1,107 @@
+﻿/* Performance Review Container */
+.performance-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+/* Record Card */
+.record-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.record-header {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.2rem;
+    background-color: #f1f5f9;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+    .record-header:hover {
+        background-color: #e0ebff;
+    }
+
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+    .arrow.rotated {
+        transform: rotate(180deg);
+    }
+
+/* Record Body */
+.record-body {
+    padding: 1rem 1.2rem;
+    display: none;
+}
+
+    .record-body.open {
+        display: block;
+    }
+
+/* Performance Bar */
+.performance-bar {
+    width: 100%;
+    height: 16px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.performance-fill {
+    height: 100%;
+    background-color: #258cfb;
+    border-radius: 8px 0 0 8px;
+    transition: width 0.5s ease;
+}
+
+/* Record Details */
+.record-details {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+    .record-details p {
+        margin: 0.25rem 0;
+    }
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .performance-container {
+        padding: 0.5rem;
+    }
+
+    .record-header {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .performance-bar {
+        height: 12px;
+    }
+}

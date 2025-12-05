@@ -3,19 +3,12 @@
 @{
     Layout = "_Layout";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/css/Book_Sessions.css" asp-append-version="true" />
+}
 
 <div class="booking-container">
 
-    <!-- HEADER NAV (placeholder) -->
-    <header class="booking-nav">
-        <div class="logo-box"></div>
-        <nav>
-            <a href="#">Nav Item</a>
-            <a href="#">Nav Item</a>
-            <a href="#">Nav Item</a>
-        </nav>
-        <div class="close-btn">✕</div>
-    </header>
 
     <!-- MAIN CARD -->
     <section class="booking-card">
@@ -31,42 +24,31 @@
 
             <input type="email" name="Email" placeholder="Email Address" required />
 
+            <!-- DATE + TIME ROW -->
             <div class="input-row">
-                <div class="time-input">
-                    <input type="time" name="Time" />
+                <input type="date" name="Date" placeholder="Date" class="half-input" required />
+                <input type="time" name="Time" placeholder="Time" class="half-input" required />
+            </div>
+
+            <!-- START + END PAGE (new line & centered) -->
+            <div class="page-row">
+                <div class="page-box">
+                    <label>Start Page</label>
+                    <input type="number" name="StartPage" />
                 </div>
 
-                <button type="button" class="small-btn">START PAGE</button>
-                <button type="button" class="small-btn">END PAGE</button>
+                <div class="page-box">
+                    <label>End Page</label>
+                    <input type="number" name="EndPage" />
+                </div>
             </div>
+
 
             <button type="submit" class="next-btn">NEXT</button>
 
         </form>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-col">
-            <h3>Logo</h3>
-            <p>Our vision is to provide convenience and help increase your sales business.</p>
-        </div>
-
-        <div class="footer-col">
-            <h3>About</h3>
-            <a href="#">How it works</a>
-        </div>
-
-        <div class="footer-col">
-            <h3>Community</h3>
-            <a href="#">Events</a>
-        </div>
-
-        <div class="footer-col">
-            <h3>Socials</h3>
-            <a href="#">Discord</a>
-            <a href="#">Instagram</a>
-        </div>
-    </footer>
+    
 
 </div>
