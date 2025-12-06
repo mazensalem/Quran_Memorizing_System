@@ -1,0 +1,92 @@
+﻿@page
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+@section Styles {
+    <style>
+        .profile-wrapper {
+            max-width: 520px;
+            margin: 60px auto;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .section-divider {
+            width: 70px;
+            height: 3px;
+            background: #333;
+            border-radius: 3px;
+            margin: 10px auto 25px;
+        }
+
+        .admin-box {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #e1e1e1;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+
+        .profile-item {
+            margin-bottom: 16px;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .profile-value {
+            font-weight: 500;
+        }
+    </style>
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+
+        <div class="profile-wrapper">
+
+            <section class="mb-4">
+                <div class="section-title">My Profile</div>
+                <div class="section-divider"></div>
+
+                <div class="admin-box">
+
+                    <div class="profile-item">
+                        <div class="profile-label">Full Name</div>
+                        <div class="profile-value">Ahmed Hassan</div>
+                    </div>
+
+                    <div class="profile-item">
+                        <div class="profile-label">Email</div>
+                        <div class="profile-value">ahmed@example.com</div>
+                    </div>
+
+                    <div class="profile-item">
+                        <div class="profile-label">Phone</div>
+                        <div class="profile-value">+966 5XXXXXXXX</div>
+                    </div>
+
+                    <div class="profile-item">
+                        <div class="profile-label">Birth Date</div>
+                        <div class="profile-value">15 Jan 1995</div>
+                    </div>
+
+                    <div class="profile-item">
+                        <div class="profile-label">Gender</div>
+                        <div class="profile-value">Male</div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+</div>
