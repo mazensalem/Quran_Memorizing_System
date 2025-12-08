@@ -10,70 +10,34 @@
 
     <h1 class="page-title">Performance Review</h1>
 
-    <!-- Record 1 -->
-    <div class="record-card">
-        <button class="record-header" onclick="toggleRecord(this)">
-            Rec #1
-            <span class="arrow">▼</span>
-        </button>
+    @for (var i = 0; i < Model.P_Records.Count; i++)
+    {
+        var r = Model.P_Records[i];
+        <div class="record-card">
+            <button class="record-header" onclick="toggleRecord(this)">
+                @r.Date
+                <span class="arrow">▼</span>
+            </button>
 
-        <div class="record-body">
-            <label>Performance:</label>
-            <div class="performance-bar">
-                <div class="performance-fill" style="width: 70%;"></div>
-            </div>
+            <div class="record-body">
+                <label>Performance:</label>
+                <div class="performance-bar">
+                    <div class="performance-fill" style="width:@($"{r.Percentage}%");"></div>
+                </div>
 
-            <div class="record-details">
-                <p><strong>Issuer:</strong> Sheikh Ahmad</p>
-                <p><strong>Date:</strong> 01/02/2025</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Record 2 -->
-    <div class="record-card">
-        <button class="record-header" onclick="toggleRecord(this)">
-            Rec #2
-            <span class="arrow">▼</span>
-        </button>
-        <div class="record-body">
-            <label>Performance:</label>
-            <div class="performance-bar">
-                <div class="performance-fill" style="width: 50%;"></div>
-            </div>
-
-            <div class="record-details">
-                <p><strong>Issuer:</strong> Sheikh Omar</p>
-                <p><strong>Date:</strong> 15/01/2025</p>
+                <div class="record-details">
+                    <p><strong>Issuer:</strong> @r.Issuer</p>
+                    <p><strong>Date:</strong> @r.Date</p>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Record 3 -->
-    <div class="record-card">
-        <button class="record-header" onclick="toggleRecord(this)">
-            Rec #3
-            <span class="arrow">▼</span>
-        </button>
-        <div class="record-body">
-            <label>Performance:</label>
-            <div class="performance-bar">
-                <div class="performance-fill" style="width: 85%;"></div>
-            </div>
-
-            <div class="record-details">
-                <p><strong>Issuer:</strong> Sheikh Abdullah</p>
-                <p><strong>Date:</strong> 28/12/2024</p>
-            </div>
-        </div>
-    </div>
-
+    }
 </div>
 
 <script>
     function toggleRecord(button) {
-        const body = button.nextElementSibling;
-        body.classList.toggle("open");
+        const htmlbutton = button.nextElementSibling;
+        htmlbutton.classList.toggle("open");
 
         // rotate arrow
         const arrow = button.querySelector(".arrow");

@@ -31,28 +31,30 @@
 
         <!-- RIGHT SIDE -->
         <div class="col-md-4">
+            @if (Model.isAdmin)
+            {                
+                <!-- MEMBERS -->
+                <h5 class="fw-bold mb-2">MEMBERS</h5>
+                <hr class="mt-0"/>
 
-            <!-- MEMBERS -->
-            <h5 class="fw-bold mb-2">MEMBERS</h5>
-            <hr class="mt-0"/>
+                @foreach (var m in Model.Members)
+                {
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span>@m.Name (@m.Status)</span>
 
-            @foreach (var m in Model.Members)
-            {
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span>@m.Name (@m.Status)</span>
-
-                    @if (m.Status == "Pending")
-                    {
-                        <div>
-                            <button class="btn btn-outline-danger btn-sm">Deny</button>
-                            <button class="btn btn-outline-success btn-sm">Accept</button>
-                        </div>
-                    }
-                    else
-                    {
-                        <button class="btn btn-outline-dark btn-sm">Kick out</button>
-                    }
-                </div>
+                        @if (m.Status == "Pending")
+                        {
+                            <div>
+                                <button class="btn btn-outline-danger btn-sm">Deny</button>
+                                <button class="btn btn-outline-success btn-sm">Accept</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-dark btn-sm">Kick out</button>
+                        }
+                    </div>
+                }
             }
 
             <!-- IMPORTANT INFO -->

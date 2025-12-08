@@ -11,6 +11,7 @@ namespace Quran_Memorizing_System.Pages
         public List<Post> Posts { get; set; } = new();
         public List<Member> Members { get; set; } = new();
         public string Schedule { get; set; } = string.Empty;
+        public bool isAdmin { get; set; }
 
         public void OnGet()
         {
@@ -28,6 +29,7 @@ namespace Quran_Memorizing_System.Pages
             };
 
             Schedule = "Saturdays 5PM";
+            isAdmin = true;
         }
     }
 }

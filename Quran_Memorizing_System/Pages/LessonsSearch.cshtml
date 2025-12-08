@@ -21,41 +21,20 @@
         </div>
 
         <!-- Lesson cards -->
-        <div class="lesson-card">
-            <div class="d-flex align-items-start">
-                <div class="lesson-radio"></div>
-                <div>
-                    <div class="lesson-label">Name</div>
-                    <div class="lesson-title">Lesson Title</div>
-                    <div class="small fw-semibold">(Tag1, Tag2)</div>
+        @foreach (var lesson in Model.Lessons)
+        {
+            <div class="lesson-card">
+                <div class="d-flex align-items-start">
+                    <div class="lesson-radio"></div>
+                    <div>
+                        <div class="lesson-label">@lesson.Instructor</div>
+                        <div class="lesson-title">@lesson.Title</div>
+                        <div class="small fw-semibold">(@string.Join(", ", lesson.Tags))</div>
+                    </div>
                 </div>
+                <button class="btn btn-dark watch-btn">Watch</button>
             </div>
-            <button class="btn btn-dark watch-btn">Watch</button>
-        </div>
-
-        <div class="lesson-card">
-            <div class="d-flex align-items-start">
-                <div class="lesson-radio"></div>
-                <div>
-                    <div class="lesson-label">Name</div>
-                    <div class="lesson-title">Lesson Title</div>
-                    <div class="small fw-semibold">(Tag1, Tag2)</div>
-                </div>
-            </div>
-            <button class="btn btn-dark watch-btn">Watch</button>
-        </div>
-
-        <div class="lesson-card">
-            <div class="d-flex align-items-start">
-                <div class="lesson-radio"></div>
-                <div>
-                    <div class="lesson-label">Name</div>
-                    <div class="lesson-title">Lesson Title</div>
-                    <div class="small fw-semibold">(Tag1, Tag2)</div>
-                </div>
-            </div>
-            <button class="btn btn-dark watch-btn">Watch</button>
-        </div>
+        }
     </div>
 
     <!-- Right: Filters -->
