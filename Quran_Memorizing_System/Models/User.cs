@@ -46,5 +46,7 @@ namespace Quran_Memorizing_System.Models
         [Required]
         [RegularExpression(@"^(Male|Female)$", ErrorMessage = "Gender must be Male or Female")]
         public string gender { get; set; }
+
+        public bool isverified { get; set; }
     }
 }
