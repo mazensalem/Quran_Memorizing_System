@@ -1,0 +1,39 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.AdmitSheikhModel
+@{
+	@using System.Data
+}
+
+<div>
+	<div>
+		@if (TempData["SuccessMessage"] != null)
+		{
+			@TempData["SuccessMessage"]
+		}
+	</div>
+	<!--Search for Sheikhs-->
+	<form asp-page-handler="Search" method="post">
+		<lable for="NameAndEmailSearch">Enter the name or email you want</lable>
+		<input id="NameAndEmailSearch" asp-for="@Model.SearchInput" />
+		<button type="submit">Search</button>
+	</form>
+
+	<div>
+		@foreach (var sheikh in Model.Sheikhs.Rows.Cast<DataRow>())
+		{
+			<div>
+				@sheikh["Username"]
+				@sheikh["Email"]
+				<form asp-page-handler="Admit" method="post">
+					<input type="hidden" value="@sheikh["Email"]" name="user" />
+					<button type="submit" class="btn btn-success">Admit</button>
+				</form>
+				<form asp-page-handler="Deny" method="post">
+					<input type="hidden" value="@sheikh["Email"]" name="user" />
+					<button type="submit" class="btn btn-danger">Deny</button>
+				</form>
+			</div>
+			<br />
+		}
+	</div>
+</div>

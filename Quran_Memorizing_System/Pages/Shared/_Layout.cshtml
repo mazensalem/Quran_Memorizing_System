@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var isLoggedIn = Context.Session.GetString("email") != null;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -37,11 +41,17 @@
                             <i class="bi bi-person"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <!-- Update these hrefs to match your sign-in / sign-up routes -->
-                            <li><a class="dropdown-item" href="/Login_Page">Sign in</a></li>
-                            <li><a class="dropdown-item" href="/SignUp_Page">Sign up</a></li>
-                            <li><a class="dropdown-item" href="/Profile">Profile</a></li>
-                            <li><a class="dropdown-item" href="/logout">Log out</a></li>
+                            @if (isLoggedIn)
+                            {
+                                <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout">Log out</a></li>
+
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="/Login_Page">Sign in</a></li>
+                                <li><a class="dropdown-item" href="/SignUp_Page">Sign up</a></li>
+                            }
                         </ul>
                     </div>
                 </div>
