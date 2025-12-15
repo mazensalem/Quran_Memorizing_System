@@ -12,12 +12,13 @@ namespace Quran_Memorizing_System.Pages
 
         public List<Circle> Circles { get; set; } = new();
         public List<Notification> Notifications { get; set; } = new();
+        public bool isAdmin { get; set; }
 
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
 
-            // sample data to avoid null references in Razor during development
+            // sample data to avoid null  during running
             Circles = new List<Circle>
             {
                 new Circle("Tajweed Circle", "Ahmed", "/images/circle1.png"),
@@ -33,6 +34,7 @@ namespace Quran_Memorizing_System.Pages
 
         public void OnGet()
         {
+            isAdmin = true;
         }
     }
 }
