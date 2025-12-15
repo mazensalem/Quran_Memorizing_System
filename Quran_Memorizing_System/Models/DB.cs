@@ -42,7 +42,6 @@ namespace Quran_Memorizing_System.Models
                 cmd.Parameters.AddWithValue("@Phonevisiablity", user.PhoneVisability);
                 cmd.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth);
 
-                Console.WriteLine(cmd.ToString());
 
                 cmd.ExecuteNonQuery();
             }
@@ -408,7 +407,6 @@ namespace Quran_Memorizing_System.Models
             bool status = true;
             try
             {
-                Console.WriteLine(email);
                 con.Open();
                 string query = "UPDATE Sheikhs SET isverifed = 1 WHERE Email = @email";
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -593,6 +591,136 @@ namespace Quran_Memorizing_System.Models
             }
 
             return dt;
+        }
+
+        public DataTable GetAnnouncments(string c_name)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Announcment WHERE Circle_ID = (SELECT ID FROM Memorization_Circles WHERE Name = @cname)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@cname", c_name);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
+
+        public bool addtocircule(string email, string cname)
+        {
+            bool status = false;
+            try
+            {
+                con.Open();
+                string query = "INSERT INTO Participant_Circle_Attend VAlUES (@email, @cid)";
+                string querytemp = "SELECT ID FROM Memorization_Circles WHERE Name = @cname";
+                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd2 = new SqlCommand(querytemp, con);
+
+
+                cmd2.Parameters.AddWithValue("@cname", cname);
+
+                int cid = Convert.ToInt32(cmd2.ExecuteScalar());
+                
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@cid", cid);
+                cmd.ExecuteNonQuery();
+                status = true;
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine(ex);
+                status = false;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return status;
+        }
+
+        public DataTable getusersincircule(string cname)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Participant_Circle_Attend WHERE Circle_ID IN (SELECT ID FROM Memorization_Circles WHERE Name = @cname)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@cname", cname);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
+
+        public bool removefromcircle(string email, string cname)
+        {
+            bool status = false;
+
+            try
+            {
+                con.Open();
+                string query = "DELETE FROM Participant_Circle_Attend WHERE Participant_Email = @email and Circle_ID IN (SELECT ID FROM Memorization_Circles WHERE Name = @cname)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@cname", cname);
+                cmd.ExecuteNonQuery();
+                status = true;
+            }
+            catch
+            {
+                status = false;
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return status;
+        }
+
+        public bool isincircle(string email, string cname) {
+            bool status = false;
+
+            try
+            {
+                con.Open();
+                string query = "SELECT COUNT(*) FROM Participant_Circle_Attend WHERE Participant_Email=@email and Circle_ID IN (SELECT ID FROM Memorization_Circles WHERE Name = @cname)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@cname", cname);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                if (count >= 1)
+                    status = true;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return status;
         }
     }
 }
