@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Quran_Memorizing_System.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace Quran_Memorizing_System.Pages
 {
@@ -7,23 +10,27 @@ namespace Quran_Memorizing_System.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
-        public record Circle(string Name, string AdminName, string ImageUrl);
         public record Notification(string Message, string TimeAgo);
 
-        public List<Circle> Circles { get; set; } = new();
+        public DataTable Circles { get; set; }
         public List<Notification> Notifications { get; set; } = new();
         public bool isAdmin { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+
+        DB db;
+        public User user { get; set; }
+
+        [BindProperty]
+        [Required]
+        public string newcirculename { get; set; }
+        [BindProperty]
+        public bool ispublic { get; set; }
+
+        public IndexModel(ILogger<IndexModel> logger, DB dB)
         {
             _logger = logger;
-
-            // sample data to avoid null  during running
-            Circles = new List<Circle>
-            {
-                new Circle("Tajweed Circle", "Ahmed", "/images/circle1.png"),
-                new Circle("Memorization Circle", "Fatima", "/images/circle2.png")
-            };
+            db = dB;
+            user = new User();
 
             Notifications = new List<Notification>
             {
@@ -32,9 +39,70 @@ namespace Quran_Memorizing_System.Pages
             };
         }
 
+        void setuser()
+        {
+            if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")))
+            {
+                var role = HttpContext.Session.GetString("role");
+                var email = HttpContext.Session.GetString("email");
+                DataTable userdt = db.GetUser(email, role);
+
+                user.UserName = Convert.ToString(userdt.Rows[0]["UserName"]);
+                user.PhoneNumber = Convert.ToInt32(userdt.Rows[0]["Phone"]);
+                user.Email = email;
+                user.gender = Convert.ToString(userdt.Rows[0]["Gender"]);
+                user.role = role;
+                user.PhoneVisability = Convert.ToBoolean(userdt.Rows[0]["Phonevisability"]);
+                user.DateOfBirth = Convert.ToDateTime(userdt.Rows[0]["DateofBirth"]).ToShortDateString();
+
+                if (user.gender == "F")
+                {
+                    user.gender = "Female";
+                }
+                else
+                {
+                    user.gender = "Male";
+                }
+
+                if (user.role == "Participant")
+                {
+                    user.isverified = false;
+                }
+                else
+                {
+                    user.isverified = Convert.ToBoolean(userdt.Rows[0]["isverifed"]);
+                }
+            }
+        }
+
         public void OnGet()
         {
-            isAdmin = true;
+            setuser();
+            Circles = db.getusercirules(user.Email, user.role);
+        }
+
+        public IActionResult OnPostAddcircule()
+        {
+            if (db.circuleNameExists(newcirculename))
+            {
+                ModelState.AddModelError("newcirculename", "This name already exists");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                setuser();
+                return Page();
+            }
+
+            if (db.addCircule(newcirculename, ispublic, HttpContext.Session.GetString("email")))
+            {
+                TempData["SuccessMessage"] = "You Added the Circule";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Something is wrong";
+            }
+            return RedirectToPage("/Home");
         }
     }
 }

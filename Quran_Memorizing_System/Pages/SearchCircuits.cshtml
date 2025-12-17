@@ -1,0 +1,21 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.SearchCircuitsModel
+@{
+	@using System.Data
+}
+
+<form method="post" asp-page-handler="Search">
+	Enter the Circuit Name
+	<input asp-for="@Model.searchinput" />
+	<button type="submit">search</button>
+</form>
+
+<div>
+	@foreach (DataRow Circles in Model.Circles.Rows)
+	{
+		<div>
+			@Circles["Name"]
+			<a asp-page="/Memorization_Circle" asp-route-name="@Circles["Name"]">Enter</a>
+		</div>
+	}
+</div>

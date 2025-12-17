@@ -10,6 +10,10 @@
 		{
 			@TempData["SuccessMessage"]
 		}
+		@if (TempData["ErrorMessage"] != null)
+		{
+			@TempData["ErrorMessage"]
+		}
 	</div>
 	<!--Search for Sheikhs-->
 	<form asp-page-handler="Search" method="post">

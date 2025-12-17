@@ -50,6 +50,10 @@ namespace Quran_Memorizing_System.Pages
                 TempData["SuccessMessage"] = "User Admited";
                 Sheikhs = db.getUnderReviewShikhs(SearchInput);
             }
+            else
+            {
+                TempData["ErrorMessage"] = "Something is wrong";
+            }
         }
 
         public void OnPostDeny(string user)
@@ -58,6 +62,10 @@ namespace Quran_Memorizing_System.Pages
             {
                 TempData["SuccessMessage"] = "User Deleted";
                 Sheikhs = db.getUnderReviewShikhs(SearchInput);
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Something is wrong";
             }
         }
     }
