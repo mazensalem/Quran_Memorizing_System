@@ -14,6 +14,7 @@ namespace Quran_Memorizing_System.Pages
 
         public DataTable Circles { get; set; }
         public List<Notification> Notifications { get; set; } = new();
+        public bool isAdmin { get; set; }
 
 
         DB db;

@@ -18,6 +18,7 @@
     </div>
 
     <div class="d-flex flex-column col-md-9 mt-4">
+        @if (!Model.isAdmin){
         <!-- booking div -->
         <div class="d-flex justify-content-center">
             <div class="d-flex align-items-center justify-content-between border rounded-3 p-3 w-75">
@@ -36,7 +37,7 @@
 
             </div>
         </div>
-
+        }
         <!-- circle  cards -->
         <div class="d-flex flex-row justify-content-between col-md-9 m-4 flex-wrap">
             @foreach (DataRow circle in Model.Circles.Rows)
