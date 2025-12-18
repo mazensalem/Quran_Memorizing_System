@@ -6,25 +6,33 @@
     <link rel="stylesheet" href="~/css/Exam.css" asp-append-version="true" />
 }
 
-<div class="row pt-3 container">
+<form method="post" class="row pt-3 container">
     <!-- Questions -->
     <div class="col-lg-8">
-        @for (var i = 0; i < Model.questions.Count; i++)
+        @for (var i = 0; i < Model.Questions.Count; i++)
         {
-            var q = Model.questions[i];
+            var q = Model.Questions[i];
             <section class="mb-4">
                 <div class="question-title">@q.Title</div>
                 <div class="question-divider"></div>
 
                 <div class="question-box">
-                    @if (q.Options != null && q.Options.Count > 0)
+                    <input type="hidden" asp-for="Questions[@i].Id" />
+                    <input type="hidden" asp-for="Questions[@i].ExamId" />
+                    <input type="hidden" asp-for="Questions[@i].Title" />
+                    <input type="hidden" asp-for="Questions[@i].Type" />
+                    <input type="hidden" asp-for="subid" />
+                    @if (q.Choices != null && q.Choices.Count > 0)
                     {
-                        for (var j = 0; j < q.Options.Count; j++)
+                        var choiceIndex = 0;
+
+                        foreach (var choice in q.Choices)
                         {
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="q@(i + 1)" id="q@(i + 1)a@(j + 1)">
-                                <label class="form-check-label" for="q@(i + 1)a@(j + 1)">@q.Options[j]</label>
+                                <input class="form-check-input" type="radio" name="Questions[@i].CorrectAnswerText" value="@choice.Text" id="q@(i)_choice@(choiceIndex)" />
+                                <label class="form-check-label" for="q@(i)_choice@(choiceIndex)">@choice.Text</label>
                             </div>
+                            choiceIndex++;
                         }
                     }
                     else
@@ -52,8 +60,30 @@
     <div class="col-lg-4 d-flex justify-content-lg-end justify-content-center align-content-lg-start align-items-start mt-4 mt-lg-0">
         <div class="timer-card">
             <div class="timer-title">Timer Left</div>
-            <div class="timer-time" id="timerDisplay">00:00</div>
+            <div class="timer-time" id="timer">00:00</div>
         </div>
     </div>
 
-</div>
+</form>
+
+
+@section Scripts {
+    <script>
+        let timeLeft = @Model.Exam.Rows[0]["examduration"] ;
+        const timerElement = document.getElementById('timer');
+
+        const countdown = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = 'Time up!';
+                // Optional: Submit form or redirect
+                // document.getElementById('myForm').submit();
+            }
+            timeLeft--;
+        }, 1000);
+    </script>
+}

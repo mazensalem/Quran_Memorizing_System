@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Quran_Memorizing_System.Pages;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Quran_Memorizing_System.Models
@@ -865,6 +866,141 @@ namespace Quran_Memorizing_System.Models
             {
                 con.Close();
             }
+            return status;
+        }
+
+        public DataTable getExam(int examid)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Exams WHERE Exam_ID=@id";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@id", examid);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return dt;
+        }
+
+        public int startExam(int examid, string email)
+        {
+            int exam_sub_id = 0;
+            try
+            {
+                con.Open();
+                string query = "INSERT INTO Exam_Submissions (Exam_ID, Participant_Email, Submited) VALUES (@examid, @email, 0)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@examid", examid);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.ExecuteNonQuery();
+
+                string query2 = "SELECT Exam_Sub_ID FROM Exam_Submissions WHERE Exam_ID = @examid and Participant_Email = @email ORDER BY StartDate";
+                SqlCommand cmd2 = new SqlCommand(query2, con);
+                cmd2.Parameters.AddWithValue("@examid", examid);
+                cmd2.Parameters.AddWithValue("@email", email);
+                exam_sub_id = (int)cmd2.ExecuteScalar();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return exam_sub_id;
+        }
+
+        public List<Question> getQuestiosn(int examid)
+        {
+            List<Question> Questions = new List<Question> { };
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Questions WHERE Exam_ID = @examid";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@examid", examid);
+                DataTable questions = new DataTable();
+                questions.Load(cmd.ExecuteReader());
+                foreach (DataRow question in questions.Rows)
+                {
+                    Question questionmodel = new Question();
+                    questionmodel.Title = Convert.ToString(question["Title"]);
+                    questionmodel.Type = Convert.ToString(question["QType"]);
+
+                    string query2 = "SELECT * FROM Choices WHERE Q_ID = @qid";
+                    DataTable choices = new DataTable();
+                    SqlCommand cmd2 = new SqlCommand(query2, con);
+                    cmd2.Parameters.AddWithValue("@qid", question["Q_ID"]);
+                    choices.Load(cmd2.ExecuteReader());
+                    questionmodel.Choices = new List<Choice> { };
+
+                    foreach (DataRow choice in choices.Rows)
+                    {
+                        Choice ch = new Choice();
+                        ch.Text = Convert.ToString(choice["Choice"]);
+                        questionmodel.Choices.Add(ch);
+                    }
+
+                    Questions.Add(questionmodel);
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return Questions;
+        }
+
+        public bool submitExam(string email, List<Question> questions, int subid)
+        {
+            bool status = false;
+
+            try
+            {
+                con.Open();
+                foreach (Question question in questions) 
+                {
+                    string query = "INSERT INTO QuestionSubmition(Exam_Sub_ID, Question_ID, Answer) Values (@subid, @questionid, @answer)";
+
+                    string querytemp = "SELECT Q_ID from Questions where Title = @title";
+                    SqlCommand cmdtemp = new SqlCommand(querytemp, con);
+                    cmdtemp.Parameters.AddWithValue("@title", question.Title);
+                    int qid = (int)cmdtemp.ExecuteScalar();
+
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@subid", subid);
+                    cmd.Parameters.AddWithValue("@questionid", qid);
+                    cmd.Parameters.AddWithValue("@answer", question.CorrectAnswerText);
+                    cmd.ExecuteNonQuery();
+                }
+                status = true;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
             return status;
         }
     }
