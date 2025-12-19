@@ -1,5 +1,6 @@
 ﻿@{
     var isLoggedIn = Context.Session.GetString("email") != null;
+    var role = Context.Session.GetString("role") == "Sheikh";
 }
 
 <!DOCTYPE html>
@@ -28,6 +29,10 @@
                     <li class="nav-item me-3"><a class="nav-link" href="/LessonsSearch"> Lessons </a></li>
                     <li class="nav-item me-3"><a class="nav-link" href="/SearchCircuits">circles</a></li>
                     <li class="nav-item me-3"><a class="nav-link" href="/Book_Sessions">Book Session</a></li>
+                    @if (role)
+                    {
+                        <li class="nav-item me-3"><a class="nav-link" href="/CreateExam">Create Exam</a></li>
+                    }
                 </ul>
 
                 <div class="ms-auto">

@@ -9,8 +9,7 @@ namespace Quran_Memorizing_System.Models
 
         public int QuestionId { get; set; }
 
-        [Required]
-        [StringLength(500)]
+
         public string Text { get; set; }
     }
 }

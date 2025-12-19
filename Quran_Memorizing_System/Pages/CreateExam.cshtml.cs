@@ -157,6 +157,28 @@ namespace Quran_Memorizing_System.Pages
             exam.PublicAvailabilty = PublicAvailability;
             exam.Title = ExamTitle;
 
+            if (db.Examnameexists(exam.Title))
+            {
+                ModelState.AddModelError("ExamTitle", "This name is already taken");
+
+                if (!String.IsNullOrEmpty(user.Email) && !String.IsNullOrEmpty(user.role))
+                {
+                    DataTable circlesTable = db.getusercirules(user.Email, user.role);
+                    UserCircles = new List<CircleOption>();
+
+                    foreach (DataRow row in circlesTable.Rows)
+                    {
+                        UserCircles.Add(new CircleOption
+                        {
+                            ID = Convert.ToInt32(row["ID"]),
+                            Name = Convert.ToString(row["Name"])
+                        });
+                    }
+                }
+
+                return Page();
+            }
+
 
             if (db.createExam(exam))
             {
@@ -166,7 +188,7 @@ namespace Quran_Memorizing_System.Pages
             else
             {
                 TempData["ErrorMessage"] = "Something went wrong";
-                return Page();
+                return RedirectToPage("/CreateExam");
             }
         }
     }

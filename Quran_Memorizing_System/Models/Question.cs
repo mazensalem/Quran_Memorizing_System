@@ -18,7 +18,7 @@ namespace Quran_Memorizing_System.Models
 
         // For MCQ questions
         [BindProperty]
-        public virtual ICollection<Choice> Choices { get; set; }
+        public virtual ICollection<Choice>? Choices { get; set; }
 
         public string? CorrectAnswerText { get; set; }
 

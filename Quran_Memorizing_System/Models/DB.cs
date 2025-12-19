@@ -771,21 +771,23 @@ namespace Quran_Memorizing_System.Models
                     cmdtemp2.Parameters.AddWithValue("@title", question.Title);
                     questionid = (int)cmdtemp2.ExecuteScalar();
 
-                    foreach (var choice in question.Choices)
+                    if (question.Type == "mcq")
                     {
-                        string query2 = "INSERT INTO Choices (Choice, Q_ID) VALUES (@ch, @qid)";
-                        SqlCommand cmd2 = new SqlCommand(query2, con);
-                        cmd2.Parameters.AddWithValue("@ch", choice.Text);
-                        cmd2.Parameters.AddWithValue("@qid", questionid);
-                        cmd2.ExecuteNonQuery();
-                    }
+                        foreach (var choice in question.Choices)
+                        {
+                            string query2 = "INSERT INTO Choices (Choice, Q_ID) VALUES (@ch, @qid)";
+                            SqlCommand cmd2 = new SqlCommand(query2, con);
+                            cmd2.Parameters.AddWithValue("@ch", choice.Text);
+                            cmd2.Parameters.AddWithValue("@qid", questionid);
+                            cmd2.ExecuteNonQuery();
+                        }
 
-                    string finalquery = "UPDATE Questions SET correctchoice = @corect WHERE Q_ID = @id";
-                    SqlCommand finalcmd = new SqlCommand(finalquery, con);
-                    finalcmd.Parameters.AddWithValue("@corect", question.CorrectAnswerText);
-                    Console.WriteLine(question.CorrectAnswerText);
-                    finalcmd.Parameters.AddWithValue("@id", questionid);
-                    finalcmd.ExecuteNonQuery();
+                        string finalquery = "UPDATE Questions SET correctchoice = @corect WHERE Q_ID = @id";
+                        SqlCommand finalcmd = new SqlCommand(finalquery, con);
+                        finalcmd.Parameters.AddWithValue("@corect", question.CorrectAnswerText);
+                        finalcmd.Parameters.AddWithValue("@id", questionid);
+                        finalcmd.ExecuteNonQuery();
+                    }
                 }
 
 
@@ -1001,6 +1003,34 @@ namespace Quran_Memorizing_System.Models
                 con.Close();
             }
 
+            return status;
+        }
+
+
+        public bool Examnameexists(string examname)
+        {
+            bool status = true;
+            try
+            {
+                con.Open();
+                DataTable dt = new DataTable();
+                string query = "SELECT * FROM Exams WHERE Title = @ename";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@ename", examname);
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    status = false;
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
             return status;
         }
     }
