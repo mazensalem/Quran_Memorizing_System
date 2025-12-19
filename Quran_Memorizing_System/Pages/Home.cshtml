@@ -38,6 +38,22 @@
             </div>
         </div>
         }
+        @if (Model.Circles.Rows.Count > 0)
+        {
+            <form method="post" asp-page-handler="SelectCircle" class="mt-4 mb-3 w-50">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Choose a circle</label>
+                    <select asp-for="SelectedCircleId"
+                            asp-items="Model.CircleOptions"
+                            class="form-select">
+                        <option value="">-- Select circle --</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Open circle</button>
+            </form>
+        }
+
         <!-- circle  cards -->
         <div class="d-flex flex-row justify-content-between col-md-9 m-4 flex-wrap">
             @foreach (DataRow circle in Model.Circles.Rows)
