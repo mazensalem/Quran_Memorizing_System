@@ -31,8 +31,11 @@
                     <div class="lesson-details">
                         <h3>@lesson["Title"]</h3>
                         <p><strong>Location:</strong> @lesson["Location"]</p>
-                        @* <p><strong>Lesson URL</strong> @lesson["lesson_url"]</p> *@
-                        <p><strong>Availability:</strong> @lesson["Availability"]</p>
+                        <p>
+                                         <strong>Availability:</strong>
+                        @(Convert.ToBoolean(lesson["Availability"]) ? "Public" : "Private")
+                        </p>
+                        @* <p><strong>Availability:</strong> @lesson["Availability"]</p> *@
                     </div>
                     <div class="lesson-actions d-flex justify-content-end">
                         <a asp-page="/ViewLesson" asp-route-id="@lesson["Lesson_ID"]" class="btn btn-dark me-2">View</a>
