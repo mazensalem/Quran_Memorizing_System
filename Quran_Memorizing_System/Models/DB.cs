@@ -11,7 +11,7 @@ namespace Quran_Memorizing_System.Models
 
         public DB()
         {
-            connectionstring = "Data Source=moaz;Initial Catalog=MemorizationSystem;Integrated Security=True;TrustServerCertificate=True;"; ;
+            connectionstring = "Data Source=Elabd;Initial Catalog=MemorizationSystem;Integrated Security=True;";
             con = new SqlConnection(connectionstring);
         }
 
