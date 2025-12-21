@@ -11,7 +11,7 @@ namespace Quran_Memorizing_System.Models
 
         public DB()
         {
-            connectionstring = "Data Source=moaz;Initial Catalog=MemorizationSystem;Integrated Security=True;TrustServerCertificate=True;"; ;
+            connectionstring = "Data Source=MAZEN\\SQLEXPRESS;Initial Catalog=MemorizationSystem;Integrated Security=True;";
             con = new SqlConnection(connectionstring);
         }
 
@@ -748,6 +748,9 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
+
+                /*You can't just delete the circle you must delte all the posts and comments and shiecks_links and participant_links asosiated with it*/
+
                 string query = "DELETE FROM Memorization_Circles WHERE Name = @name";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@name", name);
@@ -773,8 +776,9 @@ namespace Quran_Memorizing_System.Models
                 if (res == null) return false;
                 int cid = Convert.ToInt32(res);
 
+                // The column name is Time not date
                 string insertQuery = @"INSERT INTO Announcment
-                               (Circle_ID, Sh_Email, Description, Date) 
+                               (Circle_ID, Sh_Email, Description, Time) 
                                VALUES (@cid, @email, @desc, GETDATE())";
                 SqlCommand cmdInsert = new SqlCommand(insertQuery, con);
                 cmdInsert.Parameters.AddWithValue("@cid", cid);
@@ -818,7 +822,9 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
-                string query = "DELETE FROM Announcment WHERE Id = @id";
+                // MisMatch Name [Done]
+                // Take care you must delete the comments on the post first
+                string query = "DELETE FROM Announcment WHERE Announcment_ID = @id";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
@@ -834,10 +840,11 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
-                string query = @"SELECT Id, Announcement_Id, Participant_Email, Comment_Text, Comment_Date
+                // Again no id + some mismatched names
+                string query = @"SELECT announcement_Id, participant_Email, text, time
                          FROM Comments
-                         WHERE Announcement_Id = @aid
-                         ORDER BY Comment_Date";
+                         WHERE announcement_Id = @aid
+                         ORDER BY time";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@aid", announcementId);
                 dt.Load(cmd.ExecuteReader());
@@ -852,8 +859,9 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
-                string query = @"INSERT INTO Comments (Announcement_Id, Participant_Email, Comment_Text)
-                         VALUES (@aid, @email, @text)";
+                // No Comment_TEXT jsut text & time has no default value
+                string query = @"INSERT INTO Comments (Announcement_Id, Participant_Email, text, time)
+                         VALUES (@aid, @email, @text, GETDATE())";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@aid", announcementId);
                 cmd.Parameters.AddWithValue("@email", participantEmail.ToLower());
@@ -873,8 +881,8 @@ namespace Quran_Memorizing_System.Models
             {
                 con.Open();
                 string query = @"UPDATE Comments 
-                         SET Comment_Text = @text 
-                         WHERE Id = @id AND Participant_Email = @email";
+                         SET text = @text 
+                         WHERE Announcement_Id = @id AND Participant_Email = @email";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@email", participantEmail.ToLower());
@@ -893,8 +901,9 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
+                // This would delete all the comments that a person has written on the post not just the one he wanted to delete
                 string query = @"DELETE FROM Comments 
-                         WHERE Id = @id AND Participant_Email = @email";
+                         WHERE Announcement_Id = @id AND Participant_Email = @email";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@email", participantEmail.ToLower());

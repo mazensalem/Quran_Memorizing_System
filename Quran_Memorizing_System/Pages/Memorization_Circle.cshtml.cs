@@ -71,7 +71,8 @@ namespace Quran_Memorizing_System.Pages
             CommentsByAnnouncement = new Dictionary<int, DataTable>();
             foreach (DataRow p in Posts.Rows)
             {
-                int annId = Convert.ToInt32(p["Id"]);
+                // There is no ID in the DB
+                int annId = Convert.ToInt32(p["Announcment_ID"]);
                 CommentsByAnnouncement[annId] = db.GetCommentsForAnnouncement(annId);
             }
 
@@ -155,7 +156,8 @@ namespace Quran_Memorizing_System.Pages
         //  Add Announcement
         public IActionResult OnPostAddAnnouncement()
         {
-            if (role != "Sheikh")
+            // Take care you relay on role which is empty by the time this is called
+            if (HttpContext.Session.GetString("role") != "Sheikh")
             {
                 TempData["ErrorMessage"] = "You are not allowed to post.";
                 return RedirectToPage("/Memorization_Circle", new { Name = Name });

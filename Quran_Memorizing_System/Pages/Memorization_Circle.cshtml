@@ -101,6 +101,7 @@
 
     </div>
 </div>
+
 @if (Model.role == "Sheikh")
 {
     <!-- Circle settings -->
@@ -128,6 +129,8 @@
             <button type="submit" class="btn btn-danger btn-sm">Delete Circle</button>
         </form>
     </div>
+
+    <!--Shouldn't this be at the beginning of the page-->
     <!--  make announcement -->
     <div class="d-flex align-items-center border rounded-4 p-3 mb-4">
         <form method="post" asp-page-handler="AddAnnouncement" class="d-flex w-100">
@@ -138,21 +141,28 @@
             <button type="submit" class="btn btn-dark px-4">Share</button>
         </form>
     </div>
+    
     <!--  edit or delete announcement -->
-    @foreach (DataRow p in Model.Posts.Rows)
+    @for (int i=0;i<Model.Posts.Rows.Count;i++)
     {
         <div class="p-4 mb-4 bg-light rounded-4" style="background-color:#e8f0fa !important;">
             <div class="d-flex align-items-center mb-2">
                 <div class="rounded-circle bg-secondary me-2" style="width:40px; height:40px;"></div>
-                <strong>@p["Sh_Email"]</strong>
+                <strong>@Model.Posts.Rows[i]["Sh_Email"]</strong>
             </div>
 
+            <!--I have no idea why but getting the column by name didn't work and getting it by index did-->
+            <!--Take care this would allow any Sheikhs to have access even if they aren't admins in this spacific circle-->
             @if (Model.role == "Sheikh")
             {
                 <!--  Edit -->
+                <!-- This would allow Sheikhs to edit announcments even if they weren't the one's who made them -->
                 <form method="post" asp-page-handler="EditAnnouncement" class="mb-2">
-                    <input type="hidden" asp-for="EditAnnouncementId" value="@p["Id"]" />
-                    <textarea asp-for="EditAnnouncementText" class="form-control mb-2">@p["Description"]</textarea>
+                    <input type="hidden" asp-for="EditAnnouncementId" value="@Model.Posts.Rows[i][4]" />
+                    
+                    <!-- The value in between the tages gets overriden by the asp-for -->
+                    <!--This is not a solution since the data is not bind to the backend-->
+                    <textarea asp-for="@Model.Posts.Rows[i][0]" class="form-control mb-2"></textarea>
                     <input asp-for="Name" type="hidden" />
                     <button type="submit" class="btn btn-primary btn-sm">Save</button>
                 </form>
@@ -160,23 +170,28 @@
                 <!--  Delete -->
                 <form method="post" asp-page-handler="DeleteAnnouncement"
                       onsubmit="return confirm('Delete this announcement?');">
-                    <input type="hidden" name="id" value="@p["Id"]" />
+                    <input type="hidden" name="id" value="@Model.Posts.Rows[i][4]" />
                     <input asp-for="Name" type="hidden" />
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             }
             else
             {
-                <p class="mb-0">@p["Description"]</p>
+                <p class="mb-0">@Model.Posts.Rows[i][0]</p>
             }
+
         </div>
     }
 
 }
 
+
+
+<!--Shouldn't this be with the other view of the posts-->
 @foreach (DataRow p in Model.Posts.Rows)
 {
-    var annId = (int)p["Id"];
+    <!--Same thing with the column name -->
+    var annId = (int)p[4];
 
     <div class="p-4 mb-4 bg-light rounded-4" style="background-color:#e8f0fa !important;">
         <div class="d-flex align-items-center mb-2">
@@ -221,8 +236,9 @@
                         {
                             <!-- Edit comment -->
                             <form method="post" asp-page-handler="EditComment" class="d-flex mb-1">
-                                <input type="hidden" asp-for="EditCommentId" value="@c["Id"]" />
-                                <input asp-for="EditCommentText" class="form-control me-2" value="@c["Comment_Text"]" />
+                                <!--Again some mismatches-->
+                                <input type="hidden" asp-for="EditCommentId" value="@c["announcement_ID"]" />
+                                <input asp-for="EditCommentText" class="form-control me-2" value="@c["text"]" />
                                 <input asp-for="Name" type="hidden" />
                                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
                             </form>
@@ -230,14 +246,15 @@
                             <!-- Delete comment -->
                             <form method="post" asp-page-handler="DeleteComment"
                                   onsubmit="return confirm('Delete this comment?');">
-                                <input type="hidden" name="id" value="@c["Id"]" />
+                                <input type="hidden" name="id" value="@c["announcement_ID"]" />
                                 <input asp-for="Name" type="hidden" />
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
                         }
                         else
                         {
-                            <span>@c["Comment_Text"]</span>
+                            <!--Name Mismatch-->
+                            <span>@c["text"]</span>
                         }
                     </div>
                 }
@@ -245,6 +262,3 @@
         </div>
     </div>
 }
-
-
-

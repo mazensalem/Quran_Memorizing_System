@@ -40,7 +40,9 @@
         }
         @if (Model.Circles.Rows.Count > 0)
         {
-            <form method="post" asp-page-handler="SelectCircle" class="mt-4 mb-3 w-50">
+            /* This code gives and error and I don't understand what it does from my understanding The user can open any circule by just clicking on it*/ 
+            
+            /*<form method="post" asp-page-handler="SelectCircle" class="mt-4 mb-3 w-50">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Choose a circle</label>
                     <select asp-for="SelectedCircleId"
@@ -51,7 +53,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Open circle</button>
-            </form>
+            </form>*/
         }
 
         <!-- circle  cards -->
@@ -95,6 +97,7 @@
         }
     </div>
     
+    <!--We will most likely delete this section-->
     <!--notfication cards -->
     <div class="col-md-2 m-4">
         <div class="p-3 border rounded-4 shadow-sm bg-white">

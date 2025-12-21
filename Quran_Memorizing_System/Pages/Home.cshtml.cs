@@ -102,7 +102,8 @@ namespace Quran_Memorizing_System.Pages
                 "Name"     
             );
 
-            isAdmin = (user.role == "Admin");
+            /*We store role as sheikhs and participants*/
+            isAdmin = (user.role == "Sheikh");
         }
 
         public IActionResult OnPostSelectCircle()
