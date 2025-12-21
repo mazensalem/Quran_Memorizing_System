@@ -10,6 +10,7 @@
 		<div>@exam["Title"]</div>
 		<form asp-page-handler="Delete" method="post">
 			<input type="hidden" name="examid" value="@exam["Exam_ID"]" />
+			<a href="/ViewSubExam?ExamID=@exam["Exam_ID"]">View Submissions</a>
 			<button type="submit" class="btn btn-danger">Delete</button>
 		</form>
 	}

@@ -1,0 +1,16 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.GradeExamsModel
+@{
+	@using System.Data
+}
+
+<h1>Submissions for Exam @Model.ExamID</h1>
+
+@foreach (DataRow sub in Model.Submissions.Rows)
+{
+	<div>
+		<p>Student Email: @sub["Participant_Email"]</p>
+		<p>Date: @sub["StartDate"]</p>
+		<a href="/create_performance?id=@sub["Exam_Sub_ID"]" class="btn btn-success">Grade</a>
+	</div>
+}

@@ -47,7 +47,7 @@ namespace Quran_Memorizing_System.Pages
         public void OnGet()
         {
             getuser();
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string connectionString = "Data Source=MAZEN\\SQLEXPRESS;Initial Catalog=MemorizationSystem;Integrated Security=True;";
 
             using SqlConnection con = new SqlConnection(connectionString);
             using SqlCommand cmd = new SqlCommand("SELECT * FROM Lessons", con);

@@ -12,7 +12,7 @@ namespace Quran_Memorizing_System.Models
 
         public DB()
         {
-            connectionstring = "Data Source=BeSsO_2008;Initial Catalog=MemorizationSystem2;Integrated Security=True;";
+            connectionstring = "Data Source=MAZEN\\SQLEXPRESS;Initial Catalog=MemorizationSystem;Integrated Security=True;";
             con = new SqlConnection(connectionstring);
         }
 
@@ -1077,6 +1077,28 @@ namespace Quran_Memorizing_System.Models
                 con.Close();
             }
             return timeleft;
+        }
+
+        public DataTable GetExamsubmission(int examid)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Exam_Submissions WHERE Exam_ID = @examid";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@examid", examid);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
         }
     }
 }
