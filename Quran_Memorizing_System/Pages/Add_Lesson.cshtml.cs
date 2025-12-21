@@ -40,7 +40,7 @@ namespace Quran_Memorizing_System.Pages
                 return RedirectToPage("/LessonsSearch");
 
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            string instructorEmail = User.Identity.Name; 
+            string instructorEmail = User.Identity.Name;
 
             using SqlConnection con = new SqlConnection(connectionString);
             using SqlCommand cmd = new SqlCommand(
@@ -61,4 +61,5 @@ namespace Quran_Memorizing_System.Pages
             return RedirectToPage("/LessonsSearch");
         }
     }
+}
 
