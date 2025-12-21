@@ -1,43 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Quran_Memorizing_System.Models;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics;
 
 namespace Quran_Memorizing_System.Pages
 {
-    public class IndexModel : PageModel
+    public class ViewCreatedExamsModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
-
-        public record Notification(string Message, string TimeAgo);
-
-        public DataTable Circles { get; set; }
-        public List<Notification> Notifications { get; set; } = new();
-        public bool isAdmin { get; set; }
-
-
         DB db;
         public User user { get; set; }
-
-        [BindProperty]
-        [Required]
-        public string newcirculename { get; set; }
-        [BindProperty]
-        public bool ispublic { get; set; }
-
-        public IndexModel(ILogger<IndexModel> logger, DB dB)
-        {
-            _logger = logger;
-            db = dB;
-            user = new User();
-
-            Notifications = new List<Notification>
-            {
-                new Notification("New lesson available", "2h ago"),
-                new Notification("Exam scheduled tomorrow", "1d ago")
-            };
-        }
+        public DataTable CreatedExams { get; set; }
 
         void setuser()
         {
@@ -74,35 +47,34 @@ namespace Quran_Memorizing_System.Pages
                 }
             }
         }
+        public ViewCreatedExamsModel(DB dB)
+        {
+            db = dB;
+            user = new User();
+            CreatedExams = new DataTable();
+        }
 
         public void OnGet()
         {
             setuser();
-            Circles = db.getusercirules(user.Email, user.role);
+            CreatedExams = db.getCreatedExams(HttpContext.Session.GetString("email"));
         }
 
-        public IActionResult OnPostAddcircule()
+        public IActionResult OnPostDelete(int examid)
         {
-            if (db.circuleNameExists(newcirculename))
-            {
-                ModelState.AddModelError("newcirculename", "This name already exists");
-            }
 
-            if (!ModelState.IsValid)
+            if (db.deleteExam(examid))
             {
-                setuser();
-                return Page();
-            }
-
-            if (db.addCircule(newcirculename, ispublic, HttpContext.Session.GetString("email")))
-            {
-                TempData["SuccessMessage"] = "You Added the Circule";
+                TempData["SuccessMessage"] = "You Deleted Sucessfuly";
             }
             else
             {
-                TempData["ErrorMessage"] = "Something is wrong";
+                TempData["ErrorMessage"] = "Something went wrong";
             }
-            return RedirectToPage("/Home");
+
+                setuser();
+            CreatedExams = db.getCreatedExams(HttpContext.Session.GetString("email"));
+            return Page();
         }
     }
 }

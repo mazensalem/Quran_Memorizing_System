@@ -1,0 +1,16 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.ViewCreatedExamsModel
+@{
+	@using System.Data
+}
+
+<div>
+	@foreach (DataRow exam in Model.CreatedExams.Rows)
+	{
+		<div>@exam["Title"]</div>
+		<form asp-page-handler="Delete" method="post">
+			<input type="hidden" name="examid" value="@exam["Exam_ID"]" />
+			<button type="submit" class="btn btn-danger">Delete</button>
+		</form>
+	}
+</div>

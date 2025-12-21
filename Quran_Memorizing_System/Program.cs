@@ -1,7 +1,13 @@
+using Quran_Memorizing_System.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<DB>();
+builder.Services.AddSession();
+builder.Services.AddScoped<Quran_Memorizing_System.Services.EmailService>();
 
 var app = builder.Build();
 
@@ -16,6 +22,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 

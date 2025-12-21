@@ -55,70 +55,103 @@
         }
     </style>
 }
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
 
-<div class="row justify-content-center">
-    <div class="col-lg-6">
+            <form method="post" class="signup-wrapper">
 
-        <div class="signup-wrapper">
+                <section class="mb-4">
+                    <div class="section-title">Register</div>
+                    <div class="section-divider"></div>
 
-            <section class="mb-4">
-                <div class="section-title">Register</div>
-                <div class="section-divider"></div>
+                    <div class="admin-box">
 
-                <div class="admin-box">
+                        <div class="mb-3">
+                            <label class="admin-label" for="fullname">Full Name</label>
+                            <input type="text" id="fullname" class="form-control" placeholder="Full Name" asp-for="@Model.user.UserName">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.UserName"></span>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="admin-label" for="fullname">Full Name</label>
-                        <input type="text" id="fullname" class="form-control" placeholder="Full Name">
+                        <div class="mb-3">
+                            <label class="admin-label" for="email">E-mail</label>
+                            <input type="email" id="email" class="form-control" placeholder="E-mail" asp-for="@Model.user.Email">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.Email"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="phone">Phone</label>
+                            <input type="text" id="phone" class="form-control" placeholder="Phone" asp-for="@Model.user.PhoneNumber">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.PhoneNumber"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="visablephone">Do you want your phone visiable ?</label>
+                            <input type="checkbox" id="visablephone" asp-for="@Model.user.PhoneVisability" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="password">Password</label>
+                            <input type="password" id="password" class="form-control" placeholder="Password" asp-for="@Model.user.Password">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.Password"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" asp-for="@Model.user.confirmPassword">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.confirmPassword"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="birthdate">Birth Date</label>
+                            <input type="date" id="birthdate" class="form-control" asp-for="@Model.user.DateOfBirth">
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.DateOfBirth"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="gender">Gender</label>
+                            <select id="gender" class="form-select" asp-for="@Model.user.gender">
+                                <option selected disabled>Select gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.gender"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="admin-label" for="role">Role</label>
+                            <select id="role" class="form-select" asp-for="@Model.user.role">
+                                <option selected disabled>Select role</option>
+                                <option>Participant</option>
+                                <option>Sheikh</option>
+                            </select>
+                            <br />
+                            <span class="invalid-feedback d-block" asp-validation-for="@Model.user.role"></span>
+                        </div>
+
+
+
+                        <button type="submit" class="btn btn-main w-100 mt-2">
+                            Register
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <a asp-page="/Login_Page">Have an account? Sign In</a>
+                        </div>
+
                     </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="email">E-mail</label>
-                        <input type="email" id="email" class="form-control" placeholder="E-mail">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="phone">Phone</label>
-                        <input type="text" id="phone" class="form-control" placeholder="Phone">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="password">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Password">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="birthdate">Birth Date</label>
-                        <input type="date" id="birthdate" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="admin-label" for="gender">Gender</label>
-                        <select id="gender" class="form-select">
-                            <option selected disabled>Select gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                        </select>
-                    </div>
-
-                    <button type="button" class="btn btn-main w-100 mt-2">
-                        Register
-                    </button>
-
-                    <div class="text-center mt-3">
-                        <a href="/Login_Page">Have an account? Sign In</a>
-                    </div>
-
-                </div>
-            </section>
+                </section>
+            </form>
 
         </div>
-
     </div>
-</div>
 
+</div>
