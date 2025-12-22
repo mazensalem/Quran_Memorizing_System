@@ -27,9 +27,16 @@
         </div>
 
         <div class="mb-3">
+                <label class="form-label">Availability</label>
+                        <select asp-for="Availability" class="form-control">
+                                 <option value="1">Public</option>
+                                 <option value="0">Private</option>
+                             </select>
+        </div>
+        @* <div class="mb-3">
             <label class="form-label">Availability</label>
             <input asp-for="Availability" class="form-control" />
-        </div>
+        </div> *@
 
         <div class="mb-4">
             <label class="form-label">Lesson URL</label>

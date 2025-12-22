@@ -51,7 +51,7 @@ namespace Quran_Memorizing_System.Pages
         public string Location { get; set; }
 
         [BindProperty]
-        public string Availability { get; set; }
+        public int Availability { get; set; }
 
         [BindProperty]
         public string Lesson_URL { get; set; }

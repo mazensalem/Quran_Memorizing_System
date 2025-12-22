@@ -24,7 +24,7 @@ namespace Quran_Memorizing_System.Pages
         public string Location { get; set; } = "";
 
         [BindProperty]
-        public string Availability { get; set; } = "";
+        public int Availability { get; set; }
 
         [BindProperty]
         public string LessonUrl { get; set; } = "";
@@ -48,7 +48,7 @@ namespace Quran_Memorizing_System.Pages
             {
                 Title = reader["Title"].ToString();
                 Location = reader["Location"].ToString();
-                Availability = reader["Availability"].ToString();
+                Availability = Convert.ToInt32(reader["Availability"]);
                 LessonUrl = reader["lesson_url"].ToString();
             }
             else

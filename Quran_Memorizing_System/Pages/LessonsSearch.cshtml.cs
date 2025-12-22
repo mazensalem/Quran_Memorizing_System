@@ -50,9 +50,35 @@ namespace Quran_Memorizing_System.Pages
             string connectionString = "Data Source=MAZEN\\SQLEXPRESS;Initial Catalog=MemorizationSystem;Integrated Security=True;";
 
             using SqlConnection con = new SqlConnection(connectionString);
-            using SqlCommand cmd = new SqlCommand("SELECT * FROM Lessons", con);
+
+            SqlCommand cmd;
+
+            
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                cmd = new SqlCommand(
+                    "SELECT * FROM Lessons WHERE Availability = 1",
+                    con
+                );
+            }
+            
+            else
+            {
+                cmd = new SqlCommand(
+                    "SELECT * FROM Lessons",
+                    con
+                );
+            }
+
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
+
+
+            //using SqlCommand cmd = new SqlCommand("SELECT * FROM Lessons", con);
+            //con.Open();
+            //SqlDataReader reader = cmd.ExecuteReader();
+
+
 
             while (reader.Read())
             {
