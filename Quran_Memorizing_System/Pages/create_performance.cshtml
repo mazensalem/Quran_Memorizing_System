@@ -1,0 +1,18 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.create_performanceModel
+@{
+}
+
+@foreach (var question in Model.questions)
+{
+	<p>Question: @question.Key</p>
+	<p>Answer: @question.Value</p>
+	<hr />
+}
+
+<form method="post">
+	<h3>enter a grade for this student</h3>
+	<input asp-for="@Model.grade" />
+	<input asp-for="@Model.subid" type="hidden" />
+	<button type="submit">Grade</button>
+</form>

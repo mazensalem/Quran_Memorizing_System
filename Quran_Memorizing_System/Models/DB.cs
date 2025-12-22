@@ -12,7 +12,7 @@ namespace Quran_Memorizing_System.Models
 
         public DB()
         {
-            connectionstring = "Data Source=Elabd;Initial Catalog=MemorizationSystem;Integrated Security=True;";
+            connectionstring = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MemorizationSystem2;Integrated Security=True;";
             con = new SqlConnection(connectionstring);
         }
 
@@ -1301,6 +1301,28 @@ namespace Quran_Memorizing_System.Models
             return timeleft;
         }
 
+        public DataTable getallperformancereview(string email)
+        {
+            DataTable dt = new DataTable(); 
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Performance_Review WHERE Participant_Email = @email";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
+      
         public DataTable GetExamsubmission(int examid)
         {
             DataTable dt = new DataTable();
@@ -1323,6 +1345,27 @@ namespace Quran_Memorizing_System.Models
             return dt;
         }
 
+        public string getExamtitlefromsubid(int subid)
+        {
+            string res = "";
+            try
+            {
+                con.Open();
+                string query = "SELECT Title FROM Exams WHERE Exam_ID IN (SELECT Exam_ID FROM Exam_Submissions WHERE Exam_Sub_ID = @examid)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@examid", subid);
+                res = (string)cmd.ExecuteScalar();
+             }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return res;
+        }
 
         public void requestsession(string email, string date, int spage, int epage)
         {
@@ -1346,7 +1389,68 @@ namespace Quran_Memorizing_System.Models
             {
                 con.Close();
             }
+          }
+
+        public Dictionary<string, string> getsubmission(int subid, string email)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string> { };
+            try
+            {
+                con.Open();
+                DataTable dt = new DataTable();
+                string query = "SELECT Questions.Title, Answer FROM Exam_Submissions JOIN Exams ON Exams.Exam_ID = Exam_Submissions.Exam_ID JOIN Questions ON Questions.Exam_ID = Exam_Submissions.Exam_ID JOIN QuestionSubmition ON QuestionSubmition.Question_ID = Questions.Q_ID WHERE Exam_Submissions.Exam_Sub_ID = @subid AND Sheikh_email = @semail";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@subid", subid);
+                cmd.Parameters.AddWithValue("@semail", email);
+                dt.Load(cmd.ExecuteReader());
+
+                foreach (DataRow r in dt.Rows)
+                {
+                    dict.Add(Convert.ToString(r["Title"]), Convert.ToString(r["Answer"]));
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        return dict;
         }
+
+        public void addperformancereview(int subid, int rating, string sh_email)
+          {
+            try
+            {
+                con.Open();
+                string p_email = "";
+                string querytemp = "SELECT Participant_Email FROM Exam_Submissions WHERE Exam_Sub_ID = @subid;";
+                SqlCommand cmdtemp = new SqlCommand(querytemp, con);
+                cmdtemp.Parameters.AddWithValue("@subid", subid);
+                p_email = (string)cmdtemp.ExecuteScalar();
+
+
+
+                string query = "INSERT INTO Performance_Review VALUES (@rating, @subid, @semail, @pemail)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@subid", subid);
+                cmd.Parameters.AddWithValue("@rating", rating);
+                cmd.Parameters.AddWithValue("@semail", sh_email);
+                cmd.Parameters.AddWithValue("@pemail", p_email);
+                cmd.ExecuteNonQuery();
+              }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+          //////////////
 
         public DataTable getallsessions()
         {
