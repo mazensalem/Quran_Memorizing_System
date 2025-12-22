@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Quran_Memorizing_System.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -15,6 +16,10 @@ namespace Quran_Memorizing_System.Pages
         public DataTable Circles { get; set; }
         public List<Notification> Notifications { get; set; } = new();
         public bool isAdmin { get; set; }
+        [BindProperty]
+        public int SelectedCircleId { get; set; }
+
+        public SelectList CircleOptions { get; set; }
 
 
         DB db;
@@ -78,31 +83,55 @@ namespace Quran_Memorizing_System.Pages
         public void OnGet()
         {
             setuser();
+
+
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.role))
+            {
+                Circles = new DataTable();
+                CircleOptions = new SelectList(Enumerable.Empty<SelectListItem>());
+                isAdmin = false;
+                return;
+            }
+
             Circles = db.getusercirules(user.Email, user.role);
+
+
+            CircleOptions = new SelectList(
+                Circles.AsEnumerable(),
+                "ID",      
+                "Name"     
+            );
+
+            /*We store role as sheikhs and participants*/
+            isAdmin = (user.role == "Sheikh");
         }
 
-        public IActionResult OnPostAddcircule()
+        public IActionResult OnPostSelectCircle()
         {
-            if (db.circuleNameExists(newcirculename))
-            {
-                ModelState.AddModelError("newcirculename", "This name already exists");
-            }
+            setuser();
+            Circles = db.getusercirules(user.Email, user.role);
 
-            if (!ModelState.IsValid)
-            {
-                setuser();
-                return Page();
-            }
+            CircleOptions = new SelectList(
+                Circles.AsEnumerable(),
+                "ID",
+                "Name"
+            );
 
-            if (db.addCircule(newcirculename, ispublic, HttpContext.Session.GetString("email")))
-            {
-                TempData["SuccessMessage"] = "You Added the Circule";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Something is wrong";
-            }
-            return RedirectToPage("/Home");
+          
+          
+            return RedirectToPage("/Memorization_Circle", new { Name = GetCircleNameById(SelectedCircleId) });
         }
+
+        private string GetCircleNameById(int id)
+        {
+            foreach (DataRow row in Circles.Rows)
+            {
+                if (Convert.ToInt32(row["ID"]) == id)
+                    return Convert.ToString(row["Name"]);
+            }
+            return "";
+        }
+
+
     }
 }
