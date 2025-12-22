@@ -50,23 +50,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["SuccessMessage"]
-                    <button type="button" class="close btn btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
 
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @TempData["ErrorMessage"]
-                    <button type="button" class="close btn btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-
-            
             <div class="profile-wrapper">
 
                 <section class="mb-4">
@@ -134,11 +118,17 @@
 
             <div class="d-flex justify-content-around">
                 <a asp-page="/EditProfileDetails" type="submit" class="btn btn-info">Edit Details</a>
-                
+
                 @if (Model.user.role == "Sheikh" && Model.user.isverified)
-                {                
+                {
                     <a asp-page="/AdmitSheikh" type="submit" class="btn btn-success">Admit Others</a>
+                    <a href="/ViewAllrequests">View pending sessions</a>
                 }
+                else
+                {
+                    <a asp-page="/ViewRequestedSessions"> View Requested Sessions </a>
+                }
+
 
 
                 <!-- Delete Account Button -->

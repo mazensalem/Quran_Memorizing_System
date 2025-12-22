@@ -1,0 +1,16 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.ViewRequestedSessionsModel
+@{
+    @using System.Data
+}
+
+@foreach (DataRow session in Model.Sessions.Rows)
+{
+    <div>
+        @session["sheikh_email"]
+        @session["session_date"]
+        @session["start_page"]
+        @session["end_page"]
+        @session["status"]
+    </div>
+}

@@ -48,5 +48,14 @@ namespace Quran_Memorizing_System.Models
         public string gender { get; set; }
 
         public bool isverified { get; set; }
+
+        public User()
+        {
+            role = "";
+            gender = "";
+            UserName = "";
+            Email = "";
+            isverified = false;
+        }
     }
 }

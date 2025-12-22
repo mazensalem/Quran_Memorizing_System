@@ -1,0 +1,40 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.ViewLessonModel
+@{
+}
+
+@section Styles {
+        <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
+}
+
+<div class="container row pt-3">
+
+    <div class="col-lg-8">
+
+        <div class="lesson-card">
+            <div class="d-flex align-items-start">
+                <div class="lesson-radio"></div>
+                <div>
+                    <div class="lesson-label">@Model.instrutor_email</div>
+                    <div class="lesson-title">@Model.Title</div>
+                    <div class="small fw-semibold">
+                        Location: @Model.Location | Availability: @Model.Availability
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="@Model.lesson_url" target="_blank" class="btn btn-dark watch-btn">
+                    Open Lesson
+                </a>
+
+                <a href="/LessonsSearch" class="btn btn-outline-secondary watch-btn ms-2">
+                    Back
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+

@@ -1,0 +1,22 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.ViewAllrequestsModel
+@{
+    @using System.Data
+}
+
+<div>
+    @foreach (DataRow session in Model.Sessions.Rows)
+    {
+        <div>
+            email: <p>@session["participant_email"]</p>
+            session_date: <p> @session["session_date"] </p>
+            start_page: <p> @session["start_page"] </p>
+            emd_page: <p> @session["end_page"] </p>
+            <div>
+                <form method="post" asp-page-handler="Accept" asp-route-id="@session["Session_ID"]"><button type="submit">Accept</button></form>
+                <form method="post" asp-page-handler="Deny" asp-route-id="@session["Session_ID"]"><button type="submit">Deny</button></form>
+            </div>
+            <hr />
+        </div>
+    }
+</div>

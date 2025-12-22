@@ -1,21 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Quran_Memorizing_System.Models;
+using System.Data;
 
 namespace Quran_Memorizing_System.Pages
 {
-    public class Book_SessionsModel : PageModel
+    public class ViewRequestedSessionsModel : PageModel
     {
         DB db;
-        [BindProperty]
-        public string Date { get; set; }
 
-        [BindProperty]
-        public int StartPage { get; set; }
-        [BindProperty]
-        public int EndPage { get; set; }
+        public DataTable Sessions { get; set; }
 
-        public Book_SessionsModel(DB dB)
+        public ViewRequestedSessionsModel(DB dB)
         {
             db = dB;
         }
@@ -34,15 +30,8 @@ namespace Quran_Memorizing_System.Pages
                 return RedirectToPage("/home");
             }
 
+            Sessions = db.getsessionsrequestedbyuser(email);
             return Page();
-        }
-
-
-        public IActionResult OnPost()
-        {
-            db.requestsession(HttpContext.Session.GetString("email"), Date, StartPage, EndPage);
-            TempData["SucessMassage"] = "You sucessfully requested a session";
-            return RedirectToPage("Home");
         }
     }
 }

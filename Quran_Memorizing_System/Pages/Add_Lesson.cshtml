@@ -1,0 +1,43 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.Add_LessonModel
+@{
+}
+
+@section Styles {
+        <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
+}
+
+<div class="container pt-4" style="max-width: 600px;">
+    <h3 class="fw-bold mb-4">Add New Lesson</h3>
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="Title" class="form-control" required />
+        </div>
+               
+        <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" name="Location" class="form-control" required />
+        </div>
+               
+        <div class="mb-3">
+            <label class="form-label">Availability</label>
+            <input type="text" name="Availability" class="form-control" required />
+        </div>
+                
+        <div class="mb-4">
+            <label class="form-label">Lesson URL</label>
+            <input type="url" name="Lesson_URL" class="form-control" required />
+        </div>
+                
+        <div class="d-flex justify-content-start gap-2">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-plus-circle me-1"></i> Add Lesson
+            </button>
+            <a href="/LessonsSearch" class="btn btn-dark px-4">
+                <i class="bi bi-x-circle me-1"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>

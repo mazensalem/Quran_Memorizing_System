@@ -2,54 +2,65 @@
 @model Quran_Memorizing_System.Pages.LessonsSearchModel
 @{
 }
-
 @section Styles {
-    <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
 }
 
-<div class="container row pt-3">
-    <!-- Left: Search + lessons -->
-    <div class="col-lg-8">
-        <!-- Search -->
-        <div class="search-wrapper mb-4 d-flex align-items-center">
-            <input type="text"
-                   class="form-control border-0 shadow-0"
-                   placeholder="Search">
-            <button class="btn btn-dark ms-3 px-4">
-                <i class="bi bi-search me-1"></i> Enter
-            </button>
-        </div>
-
-        <!-- Lesson cards -->
-        @foreach (var lesson in Model.Lessons)
+<div class="container pt-3">
+    <div class="header d-flex justify-content-between align-items-center mb-4">
+        <h2>Lessons</h2>
+        @if (Model.user.isverified)
         {
-            <div class="lesson-card">
-                <div class="d-flex align-items-start">
-                    <div class="lesson-radio"></div>
-                    <div>
-                        <div class="lesson-label">@lesson.Instructor</div>
-                        <div class="lesson-title">@lesson.Title</div>
-                        <div class="small fw-semibold">(@string.Join(", ", lesson.Tags))</div>
-                    </div>
-                </div>
-                <button class="btn btn-dark watch-btn">Watch</button>
-            </div>
+        <div class="mb-4 text-end">
+            <a asp-page="/Add_Lesson" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i> Add Lesson
+            </a>
+        </div>
         }
     </div>
 
-    <!-- Right: Filters -->
-    <div class="col-lg-4 mt-4 mt-lg-0">
-        <h5 class="filters-title">FILTERS</h5>
-        <form class="filters-box">
-            <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="tag1">
-                <label class="form-check-label" for="tag1">Tag One</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="tag2">
-                <label class="form-check-label" for="tag2">Tag Two</label>
-            </div>
-            <button class="btn btn-dark watch-btn mt-2">Apply</button>
-        </form>
+    <div class="search-wrapper mb-4 d-flex">
+        <input type="text" id="searchBox" class="form-control" placeholder="Search lessons..." />
+        <button class="btn btn-dark" onclick="searchLessons()">Search</button>
+    </div>
+
+    <div class="lessons-list">
+        @foreach (var lesson in Model.Lessons)
+        {
+                <div class="lesson-card">
+                    <div class="lesson-details">
+                        <h3>@lesson["Title"]</h3>
+                        <p><strong>Location:</strong> @lesson["Location"]</p>
+                        @* <p><strong>Lesson URL</strong> @lesson["lesson_url"]</p> *@
+                        <p><strong>Availability:</strong> @lesson["Availability"]</p>
+                    </div>
+                    <div class="lesson-actions d-flex justify-content-end">
+                        <a asp-page="/ViewLesson" asp-route-id="@lesson["Lesson_ID"]" class="btn btn-dark me-2">View</a>
+                    @if (Model.user.isverified)
+                    {
+                                <a asp-page="/EditLesson" asp-route-Lesson_ID="@lesson["Lesson_ID"]" class="btn btn-warning me-2">Edit</a>      
+                                <form method="post" asp-page-handler="Delete" class="d-inline">
+                                    <input type="hidden" name="lessonId" value="@lesson["Lesson_ID"]" />
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                    }
+                    </div>
+                </div>
+        }
     </div>
 </div>
+
+<script>
+function searchLessons() {
+    let searchValue = document.getElementById("searchBox").value.toLowerCase();
+    let cards = document.querySelectorAll(".lesson-card");
+    cards.forEach(card => {
+        let titleElement = card.querySelector(".lesson-details h3");
+        if (titleElement) {
+            let title = titleElement.innerText.toLowerCase();
+            card.style.display = title.includes(searchValue) ? "block" : "none";
+        }
+    });
+}
+</script>
+

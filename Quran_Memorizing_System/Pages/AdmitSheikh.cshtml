@@ -5,16 +5,6 @@
 }
 
 <div>
-	<div>
-		@if (TempData["SuccessMessage"] != null)
-		{
-			@TempData["SuccessMessage"]
-		}
-		@if (TempData["ErrorMessage"] != null)
-		{
-			@TempData["ErrorMessage"]
-		}
-	</div>
 	<!--Search for Sheikhs-->
 	<form asp-page-handler="Search" method="post">
 		<lable for="NameAndEmailSearch">Enter the name or email you want</lable>

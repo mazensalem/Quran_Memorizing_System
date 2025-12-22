@@ -1,5 +1,6 @@
 ﻿@{
     var isLoggedIn = Context.Session.GetString("email") != null;
+    var role = Context.Session.GetString("role") == "Sheikh";
 }
 
 <!DOCTYPE html>
@@ -28,6 +29,10 @@
                     <li class="nav-item me-3"><a class="nav-link" href="/LessonsSearch"> Lessons </a></li>
                     <li class="nav-item me-3"><a class="nav-link" href="/SearchCircuits">circles</a></li>
                     <li class="nav-item me-3"><a class="nav-link" href="/Book_Sessions">Book Session</a></li>
+                    @if (role)
+                    {
+                        <li class="nav-item me-3"><a class="nav-link" href="/CreateExam">Create Exam</a></li>
+                    }
                 </ul>
 
                 <div class="ms-auto">
@@ -61,6 +66,24 @@
 
     
     <main role="main" class="pb-3">
+        <div>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="close btn btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="close btn btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+
         @RenderBody()
     </main>
     
@@ -73,6 +96,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+                // Add Bootstrap Icons if not already included
+        if (!document.querySelector('link[href*="bootstrap-icons"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css';
+            document.head.appendChild(link);
+        }
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

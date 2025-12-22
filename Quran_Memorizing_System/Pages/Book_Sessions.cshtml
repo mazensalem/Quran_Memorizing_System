@@ -3,6 +3,7 @@
 @{
     Layout = "_Layout";
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/Book_Sessions.css" asp-append-version="true" />
 }
@@ -16,30 +17,21 @@
         <h4 class="subtitle">Booking Information</h4>
 
         <form method="post" class="booking-form">
-
-            <div class="input-row">
-                <input type="text" name="Name" placeholder="Name" required />
-                <input type="text" name="ContactNumber" placeholder="Contact Number" required />
-            </div>
-
-            <input type="email" name="Email" placeholder="Email Address" required />
-
             <!-- DATE + TIME ROW -->
             <div class="input-row">
-                <input type="date" name="Date" placeholder="Date" class="half-input" required />
-                <input type="time" name="Time" placeholder="Time" class="half-input" required />
+                <input type="date" id="birthdate" class="form-control" asp-for="@Model.Date">
             </div>
 
             <!-- START + END PAGE (new line & centered) -->
             <div class="page-row">
                 <div class="page-box">
                     <label>Start Page</label>
-                    <input type="number" name="StartPage" />
+                    <input type="number" asp-for="@Model.StartPage" />
                 </div>
 
                 <div class="page-box">
                     <label>End Page</label>
-                    <input type="number" name="EndPage" />
+                    <input type="number" asp-for="@Model.EndPage" />
                 </div>
             </div>
 
@@ -48,7 +40,4 @@
 
         </form>
     </section>
-
-    
-
 </div>
