@@ -17,10 +17,7 @@ namespace Quran_Memorizing_System.Pages
         [Required]
         public string Password { get; set; }
 
-        [BindProperty]
-        [Required]
-        [RegularExpression(@"^(Participant|Sheikh)$")]
-        public string role { get; set; }
+        // role is not provided by the user anymore. It will be determined from the database after authentication.
         DB db;
 
         public string msg { get; set; }
@@ -39,19 +36,22 @@ namespace Quran_Memorizing_System.Pages
             {
                 return Page();
             }
-            DataTable res = db.FindUser(Email, Password, role);
-            if (res.Rows.Count == 1)
+            // Try to authenticate and determine role from the database
+            var authResult = db.AuthenticateUser(Email, Password);
+            DataTable res = authResult.Item1;
+            string detectedRole = authResult.Item2;
+            if (res.Rows.Count == 1 && !string.IsNullOrEmpty(detectedRole))
             {
-                HttpContext.Session.SetString("role", role);
+                HttpContext.Session.SetString("role", detectedRole);
                 HttpContext.Session.SetString("email", Convert.ToString(res.Rows[0]["Email"]));
                 HttpContext.Session.SetString("name", Convert.ToString(res.Rows[0]["UserName"]));
 
                 TempData["SuccessMessage"] = "Log IN Successful.";
-                return RedirectToPage("/Profile");
+                return RedirectToPage("/Index");
             }
             else
             {
-                bool foundemail = db.EmailExists(Email, role);
+                bool foundemail = db.EmailExistsAny(Email);
                 if (foundemail)
                 {
                     ModelState.AddModelError("Password", "This password is not correct");

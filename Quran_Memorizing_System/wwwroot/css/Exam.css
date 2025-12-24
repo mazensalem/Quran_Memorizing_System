@@ -1,42 +1,103 @@
-﻿/* Question layout */
+﻿/* ===== Exam Page Layout ===== */
+
+form.row.container {
+    max-width: 1080px;
+    margin: 2.5rem auto;
+}
+
+    form.row.container > h2 {
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #111827;
+    }
+
+/* ===== Question List ===== */
+
 .question-title {
-    font-size: 1.3rem;
     font-weight: 600;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.25rem;
+    font-size: 1.05rem;
+    color: #111827;
+    margin-bottom: 0.35rem;
 }
 
 .question-divider {
-    border-top: 2px solid #000;
+    height: 2px;
+    width: 60px;
+    background: linear-gradient(90deg, #2c5f2d, #97bc62);
     margin-bottom: 0.75rem;
 }
 
 .question-box {
-    border: 1px solid #000;
-    border-radius: 0.25rem;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
+    background-color: #ffffff;
+    border-radius: 0.9rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
-/* Timer card */
+    /* Multiple choice styling */
+    .question-box .form-check {
+        padding-left: 0;
+    }
+
+    .question-box .form-check-input {
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+
+    .question-box .form-check-label {
+        cursor: pointer;
+    }
+
+    /* Open answer */
+    .question-box textarea.form-control {
+        border-radius: 0.8rem;
+        border: 1px solid #d1d5db;
+        padding: 0.65rem 0.8rem;
+        resize: vertical;
+    }
+
+/* Submit button */
+form.row.container .btn-dark {
+    margin-top: 0.5rem;
+    border-radius: 999px;
+    padding-inline: 2rem;
+    font-weight: 600;
+}
+
+/* ===== Timer Card ===== */
+
 .timer-card {
-    background-color: #000;
-    color: #fff;
-    border-radius: 1.5rem;
-    padding: 1.25rem 1.75rem;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 140px;
+    background: #111827;
+    color: #f9fafb;
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+    min-width: 220px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+    text-align: center;
 }
 
 .timer-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 0.75rem;
 }
 
 .timer-time {
-    font-size: 1.6rem;
-    font-weight: 600;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    form.row.container {
+        padding-inline: 1rem;
+    }
+
+    .timer-card {
+        margin-top: 1.5rem;
+    }
 }

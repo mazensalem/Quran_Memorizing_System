@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<DB>();
+builder.Services.AddSingleton<DB>(sp => new DB(sp.GetRequiredService<IConfiguration>()));
 builder.Services.AddSession();
 builder.Services.AddScoped<Quran_Memorizing_System.Services.EmailService>();
 

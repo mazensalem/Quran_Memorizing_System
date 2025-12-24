@@ -1,0 +1,203 @@
+﻿/* ===== Circle Page (Sheikh & Participant) ===== */
+
+/* General layout */
+.circle-settings-title {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.circle-members-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e5e7eb;
+    max-width: 420px;
+}
+
+    /* Members list */
+    .circle-members-card h5 {
+        font-size: 1rem;
+    }
+
+.circle-member-row {
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed #e5e7eb;
+}
+
+    .circle-member-row:last-child {
+        border-bottom: none;
+    }
+
+.circle-member-row .member-left {
+    display: flex;
+    align-items: center;
+}
+
+.member-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#2c5f2d,#97bc62);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.member-email {
+    font-weight: 600;
+    color: #111827;
+}
+
+.member-action .btn {
+    min-width: 90px;
+}
+
+/* Update/Delete circle */
+.circle-edit-form,
+.circle-delete-form {
+    margin-top: 1rem;
+    max-width: 420px;
+}
+
+    .circle-edit-form .form-control {
+        border-radius: 0.7rem;
+    }
+
+    .circle-edit-form .form-check-input {
+        margin-top: 0.2rem;
+    }
+
+/* Make announcement */
+.make-announcement-box {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    margin: 1.5rem 0;
+}
+
+.circle-edit-form .btn {
+    min-width: 140px;
+}
+
+.btn-outline-danger {
+    border-color: #e3342f;
+    color: #e3342f;
+}
+
+.btn-outline-danger:hover {
+    background-color: #e3342f;
+    color: #fff;
+}
+
+/* Announcements */
+.announcement-card {
+    background: linear-gradient(to right, #e8f5e9, #ffffff);
+    border-radius: 1rem;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, 0.08);
+}
+
+.announcement-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.announcement-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background-color: #9ca3af;
+    margin-right: 0.6rem;
+}
+
+.announcement-author {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Comments */
+.comments-wrapper {
+    margin-top: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid #e5e7eb;
+}
+
+.comment-item {
+    background-color: #ffffff;
+    border-radius: 0.8rem;
+    padding: 0.5rem 0.7rem;
+    margin-bottom: 0.4rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+/* Add comment input */
+.comment-form input.form-control {
+    border-radius: 999px;
+}
+
+/* Buttons in comments */
+.comment-item .btn {
+    border-radius: 999px;
+    font-size: 0.75rem;
+    padding-inline: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .circle-members-card,
+    .circle-edit-form {
+        max-width: 100%;
+    }
+}
+/* Layout specifics when showing members on right and settings on left */
+.circle-settings-title {
+    margin-bottom: 1.5rem;
+}
+.make-announcement-box {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .circle-members-card {
+        position: sticky;
+        top: 100px;
+    }
+}
+/* ===== Search Circles Page ===== */
+
+.circuits-search-form .form-control {
+    border-radius: 999px;
+}
+
+.circuits-search-form .btn {
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.circuits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.circuit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-radius: 0.9rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.circuit-name {
+    font-weight: 600;
+    color: #111827;
+}

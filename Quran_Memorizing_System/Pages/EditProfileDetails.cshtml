@@ -2,35 +2,39 @@
 @model Quran_Memorizing_System.Pages.EditProfileDetailsModel
 @{
 }
-<div class="container mt-5">
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+}
+
+<div class="container edit-profile-wrapper">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-black text-white">
+        <div class="col-md-12">
+            <div class="card edit-profile-card">
+                <div class="card-header text-white">
                     <h3 class="mb-0">
                         <i class="bi bi-person-circle"></i> Edit Profile
                     </h3>
                 </div>
                 <div class="card-body">
                     <form method="post">
-                        
                         <!-- Username -->
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Username</label>
+                            <label class="form-label">Username</label>
                             <input class="form-control" placeholder="Enter your name" asp-for="@Model.user.UserName" />
                             <span class="text-danger" asp-validation-for="@Model.user.UserName"></span>
                         </div>
 
                         <!-- Email -->
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Email</label>
+                            <label class="form-label">Email</label>
                             <input class="form-control" asp-for="@Model.user.Email" readonly />
                             <small class="text-muted">Email cannot be changed</small>
                         </div>
 
                         <!-- Phone Number -->
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Phone Number</label>
+                            <label class="form-label">Phone Number</label>
                             <input class="form-control" placeholder="Enter your phone number" asp-for="@Model.user.PhoneNumber" />
                             <span asp-validation-for="@Model.user.PhoneNumber" class="text-danger"></span>
                         </div>
@@ -47,14 +51,14 @@
 
                         <!-- Date of Birth -->
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Date of Birth</label>
+                            <label class="form-label">Date of Birth</label>
                             <input class="form-control" type="date" asp-for="@Model.user.DateOfBirth" />
                             <span asp-validation-for="@Model.user.DateOfBirth" class="text-danger"></span>
                         </div>
 
                         <!-- Gender -->
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Gender</label>
+                            <label class="form-label">Gender</label>
                             <select id="gender" class="form-select" asp-for="@Model.user.gender">
                                 <option>Male</option>
                                 <option>Female</option>
@@ -64,7 +68,7 @@
 
                         <!-- Role (Read-only) -->
                         <div class="form-group mb-4">
-                            <label class="form-label fw-bold">Role</label>
+                            <label class="form-label">Role</label>
                             <input class="form-control" asp-for="@Model.user.role" readonly />
                             <small class="text-muted">Role cannot be changed</small>
                         </div>
@@ -72,7 +76,7 @@
                         <hr />
 
                         <!--Buttons-->
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center edit-profile-actions">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="bi bi-check-circle"></i> Save Changes
                             </button>
@@ -81,10 +85,14 @@
                             </a>
                         </div>
                     </form>
-                    <a asp-page="/editPassword"> Change password </a>
+
+                    <div class="change-password-link">
+                        <a asp-page="/editPassword">
+                            Change password
+                        </a>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

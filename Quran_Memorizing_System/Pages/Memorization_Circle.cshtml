@@ -1,195 +1,206 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.MemorizationCircleModel
 @{
-    @using System.Data
+    @using System.Data;
 }
+
+@functions {
+    // derive simple initials from email (before @)
+    public string MemberInitials(string email)
+    {
+        if (string.IsNullOrEmpty(email)) return "?";
+        var name = email.Split('@')[0];
+        var parts = name.Split(new char[] { '.', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return name.Substring(0, 1).ToUpper();
+        if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpper();
+        return (parts[0].Substring(0, 1) + parts[1].Substring(0, 1)).ToUpper();
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/circle.css" asp-append-version="true" />
+}
+
+<div class="circle-header mb-3">
+    <h2 class="circle-title">Circle: @Model.Name</h2>
+</div>
+
 @if (Model.role == "Sheikh")
 {
-    <!-- Circle settings -->
     <div class="mb-3">
-        <h5 class="fw-bold">Circle Settings</h5>
-        <!-- RIGHT SIDE -->
-        <div class="col-md-4">
-            @if (Model.role == "Sheikh")
-            {
-                <!-- MEMBERS -->
-                <h5 class="fw-bold mb-2">MEMBERS</h5>
+        <h5 class="fw-bold circle-settings-title">Circle Settings</h5>
 
+        <div class="row">
+            <!-- LEFT: settings and announcements -->
+            <div class="col-md-8">
+                <!-- Edit Circle -->
+                <form method="post" asp-page-handler="UpdateCircle" class="mb-2 circle-edit-form">
+                    <div class="mb-2">
+                        <label class="form-label">Circle Name</label>
+                        <input asp-for="NewCircleName" class="form-control" value="@Model.Name" />
+                    </div>
 
-                <!-- Add members-->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#AddMemberModal">ADD</button>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="NewPublicAvailable" class="form-check-input" id="publicCheck" />
+                        <label class="form-check-label" for="publicCheck">Public Available</label>
+                    </div>
 
+                    <input asp-for="Name" type="hidden" />
 
-                <!-- Confirmation Modal -->
-                <div class="modal fade" id="AddMemberModal" tabindex="-1" aria-labelledby="AddMemberModallable" aria-hidden="true">
+                    <div class="d-flex gap-2 align-items-center">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+
+                        <!-- Delete triggers modal -->
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteModal">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="ConfirmDeleteModal" tabindex="-1" aria-labelledby="ConfirmDeleteLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <form method="post" asp-page-handler="Addmember">
-                                Enter the email of the person you want to add
-                                <input asp-for="addmemberemail" />
-                                <input asp-for="Name" type="hidden" />
-                                <button type="submit">Add</button>
-                                <span asp-validation-for="addmemberemail"></span>
-                            </form>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ConfirmDeleteLabel">Delete Circle</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the circle "<strong>@Model.Name</strong>"? This action cannot be undone.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="post" asp-page-handler="DeleteCircle" class="mb-0">
+                                    <input asp-for="Name" type="hidden" />
+                                    <button type="submit" class="btn btn-danger">Yes, delete</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- make announcement -->
+                <div class="make-announcement-box mb-3">
+                    <form method="post" asp-page-handler="AddAnnouncement" class="d-flex w-100">
+                        <input asp-for="NewAnnouncement" class="form-control me-3" placeholder="Share Some Information" />
+                        <input asp-for="Name" type="hidden" />
+                        <button type="submit" class="btn btn-dark px-4">Share</button>
+                    </form>
+                </div>
 
-
-                <hr class="mt-0" />
-
-                @foreach (DataRow m in Model.Members.Rows)
+                <!-- Announcements list -->
+                @for (int i = 0; i < Model.Posts.Rows.Count; i++)
                 {
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span> @m["Participant_Email"] </span>
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-avatar"></div>
+                            <strong class="announcement-author">@Model.Posts.Rows[i]["Sh_Email"]</strong>
+                        </div>
 
-                        @if (false)
-                        {
-                            <div>
-                                <button class="btn btn-outline-danger btn-sm">Deny</button>
-                                <button class="btn btn-outline-success btn-sm">Accept</button>
-                            </div>
-                        }
-                        else
-                        {
-                            <form method="post" asp-page-handler="Removeuser">
-                                <input asp-for="Name" type="hidden" />
-                                <input name="email" value="@m["Participant_Email"]" type="hidden" />
-                                <button class="btn btn-outline-dark btn-sm" type="submit">Kick out</button>
-                            </form>
-                        }
+                        <form method="post" asp-page-handler="EditAnnouncement" class="mb-2">
+                            <input type="hidden" name="EditAnnouncementId" value="@Model.Posts.Rows[i]["Announcment_ID"]" />
+                            <textarea class="form-control mb-2" name="EditAnnouncementText">@Model.Posts.Rows[i]["Description"]</textarea>
+                            <input asp-for="Name" type="hidden" />
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        </form>
+
+                        <form method="post" asp-page-handler="DeleteAnnouncement" onsubmit="return confirm('Delete this announcement?');">
+                            <input type="hidden" name="DeleteAnnouncementId" value="@(Model.Posts.Rows[i]["Announcment_ID"])" />
+                            <input asp-for="Name" type="hidden" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                     </div>
                 }
-            }
+            </div>
+
+            <!-- RIGHT: members -->
+            <div class="col-md-4">
+                <div class="circle-members-card">
+                    <h5 class="fw-bold mb-2">MEMBERS</h5>
+
+                    <!-- Add member form (مباشر على السيرفر) -->
+                    <form method="post" asp-page-handler="Addmember" class="d-flex gap-2 align-items-center mb-2">
+                        <input asp-for="addmemberemail" class="form-control" placeholder="member email" />
+                        <input asp-for="Name" type="hidden" />
+                        <button type="submit" class="btn btn-success">Add</button>
+                    </form>
+                    <span asp-validation-for="addmemberemail" class="text-danger small"></span>
+
+                    <hr class="mt-3" />
+
+                    @foreach (DataRow m in Model.Members.Rows)
+                    {
+                        var email = Convert.ToString(m["Participant_Email"]);
+                        <div class="circle-member-row d-flex align-items-center justify-content-between">
+                            <div class="member-left d-flex align-items-center">
+                                <div class="member-avatar">@MemberInitials(email)</div>
+                                <div class="member-info ms-3">
+                                    <div class="member-email">@email</div>
+                                </div>
+                            </div>
+
+                            <form method="post" asp-page-handler="Removeuser" class="member-action">
+                                <input asp-for="Name" type="hidden" />
+                                <input name="email" value="@email" type="hidden" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Kick out</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
-        <!-- Edit Circle -->
-        <form method="post" asp-page-handler="UpdateCircle" class="mb-2">
-            <div class="mb-2">
-                <label class="form-label">Circle Name</label>
-                <input asp-for="NewCircleName" class="form-control" value="@Model.Name" />
-            </div>
-            <div class="form-check mb-2">
-                <input asp-for="NewPublicAvailable" class="form-check-input" id="publicCheck" />
-                <label class="form-check-label" for="publicCheck">Public Available</label>
-            </div>
-            <input asp-for="Name" type="hidden" />
-            <button type="submit" class="btn btn-primary btn-sm">Update Circle</button>
-        </form>
-
-        <!-- Delete Circle -->
-        <form method="post" asp-page-handler="DeleteCircle"
-              onsubmit="return confirm('Are you sure you want to delete this circle?');">
-            <input asp-for="Name" type="hidden" />
-            <button type="submit" class="btn btn-danger btn-sm">Delete Circle</button>
-        </form>
     </div>
-
-
-    <!--  make announcement -->
-    <div class="d-flex align-items-center border rounded-4 p-3 mb-4">
-        <form method="post" asp-page-handler="AddAnnouncement" class="d-flex w-100">
-            <input asp-for="NewAnnouncement"
-                   class="form-control me-3"
-                   placeholder="Share Some Information" />
-            <input asp-for="Name" type="hidden" />
-            <button type="submit" class="btn btn-dark px-4">Share</button>
-        </form>
-    </div>
-
-    <!--  edit or delete announcement -->
-    @for (int i = 0; i < Model.Posts.Rows.Count; i++)
-    {
-        <div class="p-4 mb-4 bg-light rounded-4" style="background-color:#e8f0fa !important;">
-            <div class="d-flex align-items-center mb-2">
-                <div class="rounded-circle bg-secondary me-2" style="width:40px; height:40px;"></div>
-                <strong>@Model.Posts.Rows[i]["Sh_Email"]</strong>
-            </div>
-
-           
-            @if (Model.role == "Sheikh")
-            {
-                <!--  Edit -->
-                <!-- This would allow Sheikhs to edit announcments even if they weren't the one's who made them -->
-                
-
-                <form method="post" asp-page-handler="EditAnnouncement" class="mb-2">
-                    <input type="hidden" name="EditAnnouncementId" value="@Model.Posts.Rows[i]["Announcment_ID"]" />
-                    <textarea class="form-control mb-2" name="EditAnnouncementText">@Model.Posts.Rows[i]["Description"]</textarea>
-                    <input asp-for="Name" type="hidden" />
-                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                </form>
-
-
-                <!--  Delete -->
-                <form method="post" asp-page-handler="DeleteAnnouncement"
-                      onsubmit="return confirm('Delete this announcement?');">
-                    <input type="hidden" name="DeleteAnnouncementId" value="@(Model.Posts.Rows[i]["Announcment_ID"])" />
-                    <input asp-for="Name" type="hidden" />
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
-            }
-            else
-            {
-                <p class="mb-0">@Model.Posts.Rows[i][0]</p>
-            }
-
-        </div>
-    }
-
 }
 
-
-
-
-@if (Model.role == "Participant"){
-
-@foreach (DataRow p in Model.Posts.Rows)
+@if (Model.role == "Participant")
 {
-    @if (TempData["SuccessMessage"] != null)
+    @foreach (DataRow p in Model.Posts.Rows)
     {
-        <div>
-            @TempData["SuccessMessage"]
-        </div>
-    }
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div>
+                @TempData["SuccessMessage"]
+            </div>
+        }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div>
-            @TempData["ErrorMessage"]
-        </div>
-    }
-    <!--Same thing with the column name -->
-    var annId = (int)p["Announcment_ID"];
-    <div class="p-4 mb-4 bg-light rounded-4" style="background-color:#e8f0fa !important;">
-        <div class="d-flex align-items-center mb-2">
-            <div class="rounded-circle bg-secondary me-2" style="width:40px; height:40px;"></div>
-            <strong>@p["Sh_Email"]</strong>
-        </div>
-        <p class="mb-2">@p["Description"]</p>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div>
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
-        <!-- comments  -->
-        <div class="ms-4">
-            @* Add comment *@
-            @if (Model.role == "Participant")
-            {
-                <form method="post" asp-page-handler="AddComment" class="d-flex mb-2">
-                    <input type="hidden" asp-for="NewCommentAnnouncementId" value="@annId" />
-                    <input asp-for="NewCommentText" class="form-control me-2" placeholder="Write a comment..." />
-                    <input asp-for="Name" type="hidden" />
-                    <button type="submit" class="btn btn-outline-primary btn-sm">Comment</button>
-                </form>
-            }
+        var annId = (int)p["Announcment_ID"];
 
-            @* Get comments for this announcement *@
-            @{
-                DataTable comments = null;
-                if (Model.CommentsByAnnouncement != null &&
-                Model.CommentsByAnnouncement.ContainsKey(annId))
+        <div class="announcement-card">
+            <div class="announcement-header">
+                <div class="announcement-avatar"></div>
+                <strong class="announcement-author">@p["Sh_Email"]</strong>
+            </div>
+            <p class="mb-2">@p["Description"]</p>
+
+            <!-- comments -->
+            <div class="comments-wrapper">
+                @* Add comment *@
+                @if (Model.role == "Participant")
                 {
-                    comments = Model.CommentsByAnnouncement[annId];
+                    <form method="post" asp-page-handler="AddComment" class="d-flex mb-2 comment-form">
+                        <input type="hidden" asp-for="NewCommentAnnouncementId" value="@annId" />
+                        <input asp-for="NewCommentText" class="form-control me-2" placeholder="Write a comment..." />
+                        <input asp-for="Name" type="hidden" />
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Comment</button>
+                    </form>
                 }
-            }
+
+                @* Get comments for this announcement *@
+                @{
+                    DataTable comments = null;
+                    if (Model.CommentsByAnnouncement != null &&
+                    Model.CommentsByAnnouncement.ContainsKey(annId))
+                    {
+                        comments = Model.CommentsByAnnouncement[annId];
+                    }
+                }
 
                 @* Show comments *@
                 @if (comments != null)
@@ -200,7 +211,7 @@
                         var cTime = Convert.ToDateTime(c["time"]);
                         var cAnnId = annId;
 
-                        <div class="mb-2">
+                        <div class="comment-item">
                             <small class="text-muted">@cEmail</small><br />
 
                             @if (Model.role == "Participant"
@@ -214,7 +225,7 @@
                                     <button type="submit" class="btn btn-primary btn-sm">Save</button>
                                 </form>
 
-                                <!-- Delete one comment  -->
+                                <!-- Delete one comment -->
                                 <form method="post" asp-page-handler="DeleteComment"
                                       onsubmit="return confirm('Delete this comment?');">
                                     <input type="hidden" name="announcementId" value="@cAnnId" />
@@ -231,8 +242,7 @@
                         </div>
                     }
                 }
-
+            </div>
         </div>
-    </div>
-}
+    }
 }

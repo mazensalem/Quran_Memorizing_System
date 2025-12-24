@@ -44,6 +44,7 @@ namespace Quran_Memorizing_System.Pages
         
 
         DB db;
+        private readonly ILogger<MemorizationCircleModel> _logger;
         [BindProperty]
         [Required]
         [EmailAddress]
@@ -53,8 +54,9 @@ namespace Quran_Memorizing_System.Pages
 
         public Dictionary<int, DataTable> CommentsByAnnouncement { get; set; } = new();
 
-        public MemorizationCircleModel(DB dB)
+        public MemorizationCircleModel(ILogger<MemorizationCircleModel> logger, DB dB)
         {
+            _logger = logger;
             db = dB;
         }
 
@@ -86,32 +88,60 @@ namespace Quran_Memorizing_System.Pages
 
         public IActionResult OnPostAddmember()
         {
-            
-            if (string.IsNullOrEmpty(addmemberemail) || !db.EmailExists(addmemberemail, "Participant") || db.isincircle(addmemberemail, Name))
+            _logger.LogInformation("OnPostAddmember invoked. addmemberemail={Email}, Name={Name}", addmemberemail, Name);
+            _logger.LogInformation("ModelState.IsValid={Valid}", ModelState.IsValid);
+
+            bool exists = false;
+            bool alreadyInCircle = false;
+            try
+            {
+                exists = db.EmailExists(addmemberemail, "Participant");
+                alreadyInCircle = db.isincircle(addmemberemail, Name);
+                _logger.LogInformation("EmailExists={Exists}, IsInCircle={InCircle}", exists, alreadyInCircle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking email/circle status for {Email}", addmemberemail);
+            }
+
+            if (string.IsNullOrEmpty(addmemberemail) || !exists || alreadyInCircle)
             {
                 if (!ModelState.IsValid)
                 {
-                    TempData["ErrorMessage"] = "Please Enter an email";
-                    return RedirectToPage("/Memorization_Circle", new { Name = Name });
+                    TempData["ErrorMessage"] = "Please enter a valid email.";
                 }
-                else if (db.isincircle(addmemberemail, Name))
+                else if (alreadyInCircle)
                 {
-                    TempData["ErrorMessage"] = "This email is already in the circule";
-                    return RedirectToPage("/Memorization_Circle", new { Name = Name });
-                } else
-                {
-                    TempData["ErrorMessage"] = "This email is not registered";
-                    return RedirectToPage("/Memorization_Circle", new { Name = Name });
+                    TempData["ErrorMessage"] = "This email is already in the circle.";
                 }
+                else
+                {
+                    TempData["ErrorMessage"] = "This email is not registered.";
+                }
+
+                // keep the inline form visible so user can correct
+                TempData["ShowAddInline"] = "1";
+                return RedirectToPage("/Memorization_Circle", new { Name = Name });
             }
 
-            if (db.addtocircule(addmemberemail, Name))
+            bool addResult = false;
+            try
             {
-                TempData["SuccessMessage"] = "You added Successfuly";
+                addResult = db.addtocircule(addmemberemail, Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding member {Email} to circle {Name}", addmemberemail, Name);
+            }
+
+            if (addResult)
+            {
+                TempData["SuccessMessage"] = "You added successfully.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Somthing went wrong";
+                TempData["ErrorMessage"] = "Something went wrong while adding the member.";
+                TempData["ShowAddInline"] = "1";
             }
 
             return RedirectToPage("/Memorization_Circle", new { Name = Name });

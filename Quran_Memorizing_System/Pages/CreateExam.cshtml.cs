@@ -118,6 +118,28 @@ namespace Quran_Memorizing_System.Pages
             {
                 return Page();
             }
+
+            // Ensure end time is after start time
+            if (EndTime <= StartTime)
+            {
+                ModelState.AddModelError("EndTime", "End time must be after start time.");
+                setuser();
+                if (!String.IsNullOrEmpty(user.Email) && !String.IsNullOrEmpty(user.role))
+                {
+                    DataTable circlesTable = db.getusercirules(user.Email, user.role);
+                    UserCircles = new List<CircleOption>();
+
+                    foreach (DataRow row in circlesTable.Rows)
+                    {
+                        UserCircles.Add(new CircleOption
+                        {
+                            ID = Convert.ToInt32(row["ID"]),
+                            Name = Convert.ToString(row["Name"])
+                        });
+                    }
+                }
+                return Page();
+            }
             else
             {
                 return RedirectToPage("/index");

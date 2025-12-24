@@ -47,14 +47,14 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="StartTime" class="form-label">Start Time</label>
-                        <input asp-for="StartTime" type="date" class="form-control" required />
+                    <label asp-for="StartTime" class="form-label">Start Time</label>
+                    <input asp-for="StartTime" type="datetime-local" step="60" class="form-control" required />
                         <span asp-validation-for="StartTime" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="EndTime" class="form-label">End Time</label>
-                        <input asp-for="EndTime" type="date" class="form-control" required />
+                        <input asp-for="EndTime" type="datetime-local" step="60" class="form-control" required />
                         <span asp-validation-for="EndTime" class="text-danger"></span>
                     </div>
                 </div>

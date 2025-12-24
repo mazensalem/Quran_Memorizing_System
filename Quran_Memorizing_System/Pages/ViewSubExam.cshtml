@@ -1,16 +1,32 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.GradeExamsModel
 @{
-	@using System.Data
+    @using System.Data;
 }
 
-<h1>Submissions for Exam @Model.ExamID</h1>
-
-@foreach (DataRow sub in Model.Submissions.Rows)
-{
-	<div>
-		<p>Student Email: @sub["Participant_Email"]</p>
-		<p>Date: @sub["StartDate"]</p>
-		<a href="/create_performance?id=@sub["Exam_Sub_ID"]" class="btn btn-success">Grade</a>
-	</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/exams-list.css" asp-append-version="true" />
 }
+
+<div class="container pt-4">
+    <h2 class="mb-3">Submissions for Exam @Model.ExamID</h2>
+
+    <div class="created-exams-list">
+        @foreach (DataRow sub in Model.Submissions.Rows)
+        {
+            <div class="exam-item">
+                <div>
+                    <p class="mb-1"><strong>Student Email:</strong> @sub["Participant_Email"]</p>
+                    <p class="mb-0"><strong>Date:</strong> @sub["StartDate"]</p>
+                </div>
+
+                <div>
+                    <a href="/create_performance?id=@sub["Exam_Sub_ID"]"
+                       class="btn btn-success btn-sm">
+                        Grade
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

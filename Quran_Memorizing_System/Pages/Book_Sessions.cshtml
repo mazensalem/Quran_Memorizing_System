@@ -22,17 +22,110 @@
                 <input type="date" id="birthdate" class="form-control" asp-for="@Model.Date">
             </div>
 
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var select = document.getElementById('sectionType');
+            var pageRow = document.getElementById('pageHizbRow');
+            var suraRow = document.getElementById('suraRow');
+            var startLabel = document.getElementById('startLabel');
+            var endLabel = document.getElementById('endLabel');
+            var startInput = document.getElementById('startInput');
+            var endInput = document.getElementById('endInput');
+
+            function updateVisibility() {
+                if (!select) {
+                    console.log('sectionType select not found');
+                    return;
+                }
+                var val = select.value;
+                console.log('SectionType changed to', val);
+                if (val === 'Sura') {
+                    if (pageRow) pageRow.style.display = 'none';
+                    if (suraRow) suraRow.style.display = 'block';
+                    if (startInput) startInput.value = '';
+                    if (endInput) endInput.value = '';
+                } else if (val === 'Page' || val === 'Hizb') {
+                    if (pageRow) pageRow.style.display = 'block';
+                    if (suraRow) suraRow.style.display = 'none';
+                    if (startLabel) startLabel.innerText = (val === 'Hizb') ? 'Start Hizb' : 'Start Page';
+                    if (endLabel) endLabel.innerText = (val === 'Hizb') ? 'End Hizb' : 'End Page';
+                    if (startInput) startInput.placeholder = (val === 'Hizb') ? 'e.g. 1' : 'e.g. 1';
+                    if (endInput) endInput.placeholder = (val === 'Hizb') ? 'e.g. 2' : 'e.g. 2';
+                } else {
+                    if (pageRow) pageRow.style.display = 'none';
+                    if (suraRow) suraRow.style.display = 'none';
+                }
+            }
+
+            if (select) {
+                select.addEventListener('change', updateVisibility);
+            }
+
+            // initial run
+            updateVisibility();
+            // client-side validation on submit
+            var form = document.querySelector('form.booking-form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    var val = select ? select.value : '';
+                    var startVal = startInput ? parseInt(startInput.value || '') : NaN;
+                    var endVal = endInput ? parseInt(endInput.value || '') : NaN;
+                    // Clear previous messages
+                    var startErr = document.getElementById('startError');
+                    var endErr = document.getElementById('endError');
+                    if (startErr) startErr.innerText = '';
+                    if (endErr) endErr.innerText = '';
+                    if (val === 'Page' || val === 'Hizb') {
+                        if (isNaN(startVal) || isNaN(endVal)) {
+                            e.preventDefault();
+                            if (startErr) startErr.innerText = 'Please enter start and end numbers.';
+                            return;
+                        }
+                        if (endVal <= startVal) {
+                            e.preventDefault();
+                            if (endErr) endErr.innerText = 'End must be greater than start.';
+                            return;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
+
             <!-- START + END PAGE (new line & centered) -->
+            <div class="mb-3">
+                <label class="admin-label">Section Type</label>
+                <select asp-for="@Model.SectionType" id="sectionType" class="form-select">
+                    <option value="" selected disabled>Select type</option>
+                    <option value="Page">Page</option>
+                    <option value="Hizb">Hizb</option>
+                    <option value="Sura">Sura</option>
+                </select>
+                <span class="invalid-feedback d-block" asp-validation-for="@Model.SectionType"></span>
+            </div>
+
+            <div id="pageHizbRow" style="display:none;">
             <div class="page-row">
                 <div class="page-box">
-                    <label>Start Page</label>
-                    <input type="number" asp-for="@Model.StartPage" />
+                    <label id="startLabel">Start</label>
+                    <input id="startInput" type="number" min="1" asp-for="@Model.StartPage" />
+                    <span id="startError" class="invalid-feedback d-block" asp-validation-for="@Model.StartPage"></span>
                 </div>
 
                 <div class="page-box">
-                    <label>End Page</label>
-                    <input type="number" asp-for="@Model.EndPage" />
+                    <label id="endLabel">End</label>
+                    <input id="endInput" type="number" min="1" asp-for="@Model.EndPage" />
+                    <span id="endError" class="invalid-feedback d-block" asp-validation-for="@Model.EndPage"></span>
                 </div>
+            </div>
+            </div>
+
+            <div id="suraRow" style="display:none;">
+                <label>Sura Text</label>
+                <textarea asp-for="@Model.SuraText" class="form-control"></textarea>
+                <span class="invalid-feedback d-block" asp-validation-for="@Model.SuraText"></span>
             </div>
 
 

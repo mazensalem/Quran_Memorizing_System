@@ -1,16 +1,37 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.ViewRequestedSessionsModel
 @{
-    @using System.Data
+    @using System.Data;
 }
 
-@foreach (DataRow session in Model.Sessions.Rows)
-{
-    <div>
-        @session["sheikh_email"]
-        @session["session_date"]
-        @session["start_page"]
-        @session["end_page"]
-        @session["status"]
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/requested-sessions.css" asp-append-version="true" />
 }
+
+<div class="container pt-4">
+    <h2 class="mb-3">My Session Requests</h2>
+
+    <div class="requested-sessions-list">
+        @foreach (DataRow session in Model.Sessions.Rows)
+        {
+            var status = Convert.ToString(session["status"]);
+
+            <div class="requested-session-card">
+                <div class="requested-session-main">
+                    <p><strong>Sheikh:</strong> @session["sheikh_email"]</p>
+                    <p><strong>Date:</strong> @session["session_date"]</p>
+                    <p><strong>Start page:</strong> @session["start_page"]</p>
+                    <p><strong>End page:</strong> @session["end_page"]</p>
+                </div>
+                <div class="requested-session-status">
+                    <span class="badge
+                            @(status == "Accepted" ? "bg-success" :
+                                                    status == "Denied" ? "bg-danger" :
+                                                                           "bg-secondary")">
+                        @status
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+</div>

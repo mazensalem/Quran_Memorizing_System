@@ -1,4 +1,5 @@
 ﻿using Quran_Memorizing_System.Pages;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -10,10 +11,87 @@ namespace Quran_Memorizing_System.Models
 
         private SqlConnection con;
 
-        public DB()
+        public DB(IConfiguration configuration)
         {
-            connectionstring = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MemorizationSystem2;Integrated Security=True;";
+            // Prefer a configured connection string but fall back to the previous value
+            connectionstring = configuration.GetConnectionString("DefaultConnection") ?? "Data Source=Elabd;Initial Catalog=MemorizationSystem;Integrated Security=True;";
             con = new SqlConnection(connectionstring);
+        }
+
+        // Expose the connection string for testing purposes
+        internal string GetConnectionStringForTests() => connectionstring;
+
+        // Overload to handle section type and optional sura text
+        public void requestsession(string email, string date, string sectionType, int spage, int epage, string suraText)
+        {
+            try
+            {
+                con.Open();
+                string query = "INSERT INTO Sessions (participant_email, session_date, section_type, start_page, end_page, sura_text) values (@pemail, @date, @stype, @spage, @epage, @stext)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@pemail", email);
+                cmd.Parameters.AddWithValue("@date", date);
+                cmd.Parameters.AddWithValue("@stype", sectionType);
+                cmd.Parameters.AddWithValue("@spage", spage);
+                cmd.Parameters.AddWithValue("@epage", epage);
+                cmd.Parameters.AddWithValue("@stext", (object)suraText ?? DBNull.Value);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        // Authenticate across both tables and return the user row and detected role.
+        // returns (DataTable, role) where role is "Participant" or "Sheikh" or null if not found/invalid
+        public Tuple<DataTable, string> AuthenticateUser(string email, string password)
+        {
+            try
+            {
+                // First try Participants
+                DataTable dt = GetUser(email, "Participant");
+                if (dt.Rows.Count == 1 && BCrypt.Net.BCrypt.Verify(password, Convert.ToString(dt.Rows[0]["Password"])))
+                {
+                    return Tuple.Create(dt, "Participant");
+                }
+
+                // Then try Sheikhs
+                dt = GetUser(email, "Sheikh");
+                if (dt.Rows.Count == 1 && BCrypt.Net.BCrypt.Verify(password, Convert.ToString(dt.Rows[0]["Password"])))
+                {
+                    return Tuple.Create(dt, "Sheikh");
+                }
+            }
+            catch
+            {
+            }
+
+            return Tuple.Create(new DataTable(), (string)null);
+        }
+
+        // Check if email exists in either Participants or Sheikhs
+        public bool EmailExistsAny(string email)
+        {
+            try
+            {
+                con.Open();
+                string query = "SELECT (SELECT COUNT(*) FROM Participants WHERE Email=@email) + (SELECT COUNT(*) FROM Sheikhs WHERE Email=@email)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email.ToLower());
+                int res = Convert.ToInt32(cmd.ExecuteScalar());
+                return res > 0;
+            }
+            catch
+            {
+                return false;
+            }
+            finally { con.Close(); }
         }
 
         public void AddUser(User user)

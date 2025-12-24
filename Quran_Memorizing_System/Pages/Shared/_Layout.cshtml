@@ -17,6 +17,9 @@
 
 </head>
 <body>
+    @{
+        var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "/";
+    }
     <header>
         <!-- Top Nav -->
         <nav class="navbar top-navbar bg-white">
@@ -26,12 +29,12 @@
                 </a>
 
                 <ul class="navbar-nav flex-row">
-                    <li class="nav-item me-3"><a class="nav-link" href="/LessonsSearch"> Lessons </a></li>
-                    <li class="nav-item me-3"><a class="nav-link" href="/SearchCircuits">circles</a></li>
-                    <li class="nav-item me-3"><a class="nav-link" href="/Book_Sessions">Book Session</a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/lessonssearch" ? "active" : "")" asp-page="/LessonsSearch"> Lessons </a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/searchcircuits" ? "active" : "")" asp-page="/SearchCircuits">circles</a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/book_sessions" || currentPath == "/book_sessions/index" || currentPath == "/book_sessions" ? "active" : "")" asp-page="/Book_Sessions">Book Session</a></li>
                     @if (role)
                     {
-                        <li class="nav-item me-3"><a class="nav-link" href="/CreateExam">Create Exam</a></li>
+                        <li class="nav-item me-3"><a class="nav-link @(currentPath == "/createexam" ? "active" : "")" asp-page="/CreateExam">Create Exam</a></li>
                     }
                 </ul>
 

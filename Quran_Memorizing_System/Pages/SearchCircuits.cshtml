@@ -1,21 +1,34 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.SearchCircuitsModel
 @{
-	@using System.Data
+    @using System.Data;
 }
 
-<form method="post" asp-page-handler="Search">
-	Enter the Circuit Name
-	<input asp-for="@Model.searchinput" />
-	<button type="submit">search</button>
-</form>
+@section Styles {
+    <link rel="stylesheet" href="~/css/circuits.css" asp-append-version="true" />
+}
 
-<div>
-	@foreach (DataRow Circles in Model.Circles.Rows)
-	{
-		<div>
-			@Circles["Name"]
-			<a asp-page="/Memorization_Circle" asp-route-name="@Circles["Name"]">Enter</a>
-		</div>
-	}
+<div class="container pt-4">
+    <h2 class="mb-3">Search Circles</h2>
+
+    <form method="post" asp-page-handler="Search" class="circuits-search-form mb-4 d-flex">
+        <input asp-for="@Model.searchinput"
+               class="form-control"
+               placeholder="Enter circle name..." />
+        <button type="submit" class="btn btn-dark ms-2">Search</button>
+    </form>
+
+    <div class="circuits-list">
+        @foreach (DataRow Circles in Model.Circles.Rows)
+        {
+            <div class="circuit-item">
+                <div class="circuit-name">@Circles["Name"]</div>
+                <a asp-page="/Memorization_Circle"
+                   asp-route-name="@Circles["Name"]"
+                   class="btn btn-outline-primary btn-sm">
+                    Enter
+                </a>
+            </div>
+        }
+    </div>
 </div>

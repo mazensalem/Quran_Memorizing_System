@@ -3,19 +3,19 @@
 @{
 }
 @section Styles {
-        <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/lessons.css" asp-append-version="true" />
 }
 
 <div class="container pt-3">
-    <div class="header d-flex justify-content-between align-items-center mb-4">
+    <div class="lessons-header d-flex justify-content-between align-items-center mb-4">
         <h2>Lessons</h2>
         @if (Model.user.isverified)
         {
-        <div class="mb-4 text-end">
-            <a asp-page="/Add_Lesson" class="btn btn-success">
-                <i class="bi bi-plus-circle me-1"></i> Add Lesson
-            </a>
-        </div>
+            <div class="mb-0 text-end">
+                <a asp-page="/Add_Lesson" class="btn btn-success">
+                    <i class="bi bi-plus-circle me-1"></i> Add Lesson
+                </a>
+            </div>
         }
     </div>
 
@@ -27,43 +27,41 @@
     <div class="lessons-list">
         @foreach (var lesson in Model.Lessons)
         {
-                <div class="lesson-card">
-                    <div class="lesson-details">
-                        <h3>@lesson["Title"]</h3>
-                        <p><strong>Location:</strong> @lesson["Location"]</p>
-                        <p>
-                                         <strong>Availability:</strong>
+            <div class="lesson-card">
+                <div class="lesson-details">
+                    <h3>@lesson["Title"]</h3>
+                    <p><strong>Location:</strong> @lesson["Location"]</p>
+                    <p>
+                        <strong>Availability:</strong>
                         @(Convert.ToBoolean(lesson["Availability"]) ? "Public" : "Private")
-                        </p>
-                        @* <p><strong>Availability:</strong> @lesson["Availability"]</p> *@
-                    </div>
-                    <div class="lesson-actions d-flex justify-content-end">
-                        <a asp-page="/ViewLesson" asp-route-id="@lesson["Lesson_ID"]" class="btn btn-dark me-2">View</a>
+                    </p>
+                </div>
+                <div class="lesson-actions d-flex justify-content-end">
+                    <a asp-page="/ViewLesson" asp-route-id="@lesson["Lesson_ID"]" class="btn btn-dark me-2">View</a>
                     @if (Model.user.isverified)
                     {
-                                <a asp-page="/EditLesson" asp-route-Lesson_ID="@lesson["Lesson_ID"]" class="btn btn-warning me-2">Edit</a>      
-                                <form method="post" asp-page-handler="Delete" class="d-inline">
-                                    <input type="hidden" name="lessonId" value="@lesson["Lesson_ID"]" />
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
+                        <a asp-page="/EditLesson" asp-route-Lesson_ID="@lesson["Lesson_ID"]" class="btn btn-warning me-2">Edit</a>
+                        <form method="post" asp-page-handler="Delete" class="d-inline">
+                            <input type="hidden" name="lessonId" value="@lesson["Lesson_ID"]" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     }
-                    </div>
                 </div>
+            </div>
         }
     </div>
 </div>
 
 <script>
-function searchLessons() {
-    let searchValue = document.getElementById("searchBox").value.toLowerCase();
-    let cards = document.querySelectorAll(".lesson-card");
-    cards.forEach(card => {
-        let titleElement = card.querySelector(".lesson-details h3");
-        if (titleElement) {
-            let title = titleElement.innerText.toLowerCase();
-            card.style.display = title.includes(searchValue) ? "block" : "none";
-        }
-    });
-}
+    function searchLessons() {
+        let searchValue = document.getElementById("searchBox").value.toLowerCase();
+        let cards = document.querySelectorAll(".lesson-card");
+        cards.forEach(card => {
+            let titleElement = card.querySelector(".lesson-details h3");
+            if (titleElement) {
+                let title = titleElement.innerText.toLowerCase();
+                card.style.display = title.includes(searchValue) ? "block" : "none";
+            }
+        });
+    }
 </script>
-

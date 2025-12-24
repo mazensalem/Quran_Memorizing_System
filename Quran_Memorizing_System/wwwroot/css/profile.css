@@ -1,0 +1,102 @@
+﻿/* ==== Edit Profile Card ==== */
+.edit-profile-wrapper {
+    max-width: 780px;
+    margin: 3rem auto;
+}
+
+.edit-profile-card {
+    border-radius: 1.25rem;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    overflow: hidden;
+}
+
+    .edit-profile-card .card-header {
+        background: linear-gradient(135deg, #111827, #374151);
+        padding: 1.2rem 1.5rem;
+    }
+
+        .edit-profile-card .card-header h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+    .edit-profile-card .card-body {
+        padding: 2rem 2.25rem;
+    }
+
+    /* Inputs */
+    .edit-profile-card .form-label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .edit-profile-card .form-control,
+    .edit-profile-card .form-select {
+        border-radius: 0.8rem;
+        border: 1px solid #d1d5db;
+        padding: 0.55rem 0.85rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .edit-profile-card .form-control:focus,
+        .edit-profile-card .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 0.13rem rgba(37, 99, 235, 0.25);
+        }
+
+    /* Checkbox */
+    .edit-profile-card .form-check-input {
+        width: 1.05rem;
+        height: 1.05rem;
+    }
+
+/* Buttons */
+.edit-profile-actions .btn-primary {
+    border-radius: 999px;
+    padding-inline: 1.9rem;
+    font-weight: 600;
+}
+
+.edit-profile-actions .btn-secondary {
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.edit-profile-actions i {
+    margin-right: 0.25rem;
+}
+
+/* Change password link */
+.change-password-link {
+    display: inline-block;
+    margin-top: 1.25rem;
+    font-size: 0.95rem;
+}
+
+    .change-password-link a {
+        text-decoration: none;
+        color: #2563eb;
+        font-weight: 500;
+    }
+
+        .change-password-link a:hover {
+            text-decoration: underline;
+        }
+
+/* Responsive */
+@media (max-width: 576px) {
+    .edit-profile-card .card-body {
+        padding: 1.5rem 1.5rem;
+    }
+
+    .edit-profile-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+        .edit-profile-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+}

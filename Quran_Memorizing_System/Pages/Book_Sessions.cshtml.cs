@@ -11,9 +11,14 @@ namespace Quran_Memorizing_System.Pages
         public string Date { get; set; }
 
         [BindProperty]
-        public int StartPage { get; set; }
+        public int? StartPage { get; set; }
         [BindProperty]
-        public int EndPage { get; set; }
+        public int? EndPage { get; set; }
+        [BindProperty]
+        public string SectionType { get; set; }
+
+        [BindProperty]
+        public string SuraText { get; set; }
 
         public Book_SessionsModel(DB dB)
         {
@@ -40,7 +45,40 @@ namespace Quran_Memorizing_System.Pages
 
         public IActionResult OnPost()
         {
-            db.requestsession(HttpContext.Session.GetString("email"), Date, StartPage, EndPage);
+            // Validate based on selected section type
+            if (string.IsNullOrEmpty(SectionType))
+            {
+                ModelState.AddModelError("SectionType", "Please select a section type.");
+                return Page();
+            }
+
+            if (SectionType == "Page" || SectionType == "Hizb")
+            {
+                if (!StartPage.HasValue || !EndPage.HasValue)
+                {
+                    ModelState.AddModelError("StartPage", "Please enter start and end numbers.");
+                    return Page();
+                }
+
+                if (EndPage.Value <= StartPage.Value)
+                {
+                    ModelState.AddModelError("EndPage", "End must be greater than start.");
+                    return Page();
+                }
+
+                db.requestsession(HttpContext.Session.GetString("email"), Date, SectionType, StartPage.Value, EndPage.Value, null);
+            }
+            else if (SectionType == "Sura")
+            {
+                if (string.IsNullOrWhiteSpace(SuraText))
+                {
+                    ModelState.AddModelError("SuraText", "Please enter sura text.");
+                    return Page();
+                }
+
+                db.requestsession(HttpContext.Session.GetString("email"), Date, SectionType, 0, 0, SuraText);
+            }
+
             TempData["SucessMassage"] = "You sucessfully requested a session";
             return RedirectToPage("Home");
         }
