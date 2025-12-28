@@ -37,7 +37,7 @@ namespace Quran_Memorizing_System.Pages
                 return Page();
             }
 
-            if (!_db.EmailExists(Email, role))
+            if (!_db.EmailExists(Email))
             {
                 TempData["Info"] = "If an account exists with this email, you will receive a password reset link.";
                 return Page();

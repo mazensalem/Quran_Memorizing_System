@@ -53,13 +53,11 @@
 
 /* Buttons */
 .edit-profile-actions .btn-primary {
-    border-radius: 999px;
     padding-inline: 1.9rem;
     font-weight: 600;
 }
 
 .edit-profile-actions .btn-secondary {
-    border-radius: 999px;
     font-weight: 500;
 }
 
