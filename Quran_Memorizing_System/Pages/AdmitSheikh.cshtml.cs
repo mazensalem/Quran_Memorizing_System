@@ -30,7 +30,7 @@ namespace Quran_Memorizing_System.Pages
             }
             
             DataTable userdt = db.GetUser(email, role);
-            if (!Convert.ToBoolean(userdt.Rows[0]["isverifed"]))
+            if (role != "Admin")
             {
                 return RedirectToPage("/");
             }

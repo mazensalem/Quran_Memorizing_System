@@ -1,7 +1,8 @@
-﻿using Quran_Memorizing_System.Pages;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using Quran_Memorizing_System.Pages;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace Quran_Memorizing_System.Models
 {
@@ -14,7 +15,7 @@ namespace Quran_Memorizing_System.Models
         public DB(IConfiguration configuration)
         {
             // Prefer a configured connection string but fall back to the previous value
-            connectionstring = configuration.GetConnectionString("DefaultConnection") ?? "Data Source=Elabd;Initial Catalog=MemorizationSystem;Integrated Security=True;";
+            connectionstring = configuration.GetConnectionString("DefaultConnection");
             con = new SqlConnection(connectionstring);
         }
 
@@ -60,38 +61,34 @@ namespace Quran_Memorizing_System.Models
                 {
                     return Tuple.Create(dt, "Participant");
                 }
-
                 // Then try Sheikhs
                 dt = GetUser(email, "Sheikh");
                 if (dt.Rows.Count == 1 && BCrypt.Net.BCrypt.Verify(password, Convert.ToString(dt.Rows[0]["Password"])))
                 {
                     return Tuple.Create(dt, "Sheikh");
                 }
+
+                con.Open();
+                string query = "SELECT * FROM ADMINS WHERE email=@email";
+                DataTable res = new DataTable();
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email.ToLower());
+                res.Load(cmd.ExecuteReader());
+                if (res.Rows.Count == 1 && BCrypt.Net.BCrypt.Verify(password, Convert.ToString(res.Rows[0]["Password"])))
+                {
+                    return Tuple.Create(res, "Admin");
+                }
             }
             catch
             {
+            }
+            finally
+            {
+                con.Close();
             }
 
             return Tuple.Create(new DataTable(), (string)null);
-        }
-
-        // Check if email exists in either Participants or Sheikhs
-        public bool EmailExistsAny(string email)
-        {
-            try
-            {
-                con.Open();
-                string query = "SELECT (SELECT COUNT(*) FROM Participants WHERE Email=@email) + (SELECT COUNT(*) FROM Sheikhs WHERE Email=@email)";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@email", email.ToLower());
-                int res = Convert.ToInt32(cmd.ExecuteScalar());
-                return res > 0;
-            }
-            catch
-            {
-                return false;
-            }
-            finally { con.Close(); }
         }
 
         public void AddUser(User user)
@@ -119,7 +116,7 @@ namespace Quran_Memorizing_System.Models
                 cmd.Parameters.AddWithValue("@Gender", user.gender[0]);
                 cmd.Parameters.AddWithValue("@Phone", user.PhoneNumber);
                 cmd.Parameters.AddWithValue("@Phonevisiablity", user.PhoneVisability);
-                cmd.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth);
+                cmd.Parameters.AddWithValue("@DateOfBirth", DateTime.ParseExact(user.DateOfBirth, "dd-MM-yyyy", CultureInfo.InvariantCulture).ToShortDateString());
 
 
                 cmd.ExecuteNonQuery();
@@ -165,23 +162,14 @@ namespace Quran_Memorizing_System.Models
             return res;
         }
 
-        public bool EmailExists(string email, string type)
+        public bool EmailExists(string email)
         {
             bool found = true;
             try
             {
                 con.Open();
-                string table = "";
-                if (type == "Participant")
-                {
-                    table = "Participants";
-                }
-                else
-                {
-                    table = "Sheikhs";
-                }
 
-                string query = $"SELECT COUNT(*) FROM {table} WHERE Email=@email";
+                string query = $"SELECT (SELECT COUNT(*) FROM Participants WHERE Email=@email) + (SELECT COUNT(*) FROM Sheikhs WHERE Email=@email) + (SELECT COUNT(*) FROM ADMINS WHERE email=@email)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@email", email.ToLower());
 
@@ -199,23 +187,14 @@ namespace Quran_Memorizing_System.Models
             }
             return found;
         }
-        public bool PhoneExists(int phone, string type)
+        public bool PhoneExists(int phone)
         {
             bool found = true;
             try
             {
                 con.Open();
-                string table = "";
-                if (type == "Participant")
-                {
-                    table = "Participants";
-                }
-                else
-                {
-                    table = "Sheikhs";
-                }
 
-                string query = $"SELECT COUNT(*) FROM {table} WHERE Phone=@phone";
+                string query = "SELECT (SELECT COUNT(*) FROM Participants WHERE Phone=@phone) + (SELECT COUNT(*) FROM Sheikhs WHERE Phone=@phone)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@phone", phone);
 
@@ -237,7 +216,7 @@ namespace Quran_Memorizing_System.Models
         {
             string table = "";
             if (type == "Participant") { table = "Participants"; }
-            else { table = "Sheikhs"; }
+            else if (type == "Admin") { table = "ADMINS"; } else { table = "Sheikhs"; }
             string query = $"SELECT * FROM {table} WHERE Email = @Email";
             DataTable res = new DataTable();
 
@@ -264,7 +243,15 @@ namespace Quran_Memorizing_System.Models
             string table = "";
             if (type == "Participant") { table = "Participants"; }
             else { table = "Sheikhs"; }
-            string query = $"DELETE {table} WHERE Email = @email";
+            string query = @$"
+                            DELETE FROM Comments WHERE participant_email = @email;
+                            DELETE FROM Sessions WHERE Participant_Email = @email;
+                            UPDATE Sessions set Sheikh_Email = null WHERE Sheikh_Email = @email;
+                            DELETE FROM Participant_Circle_Attend WHERE Participant_Email = @email;
+                            DELETE FROM Exam_Submissions WHERE Participant_Email = @email;
+                            DELETE FROM Performance_Review WHERE Participant_Email = @email;
+                            UPDATE Performance_Review SET Sh_Email = null WHERE Sh_Email = @email;
+                            DELETE {table} WHERE Email = @email;";
             DataTable res = new DataTable();
             try
             {
@@ -829,7 +816,14 @@ namespace Quran_Memorizing_System.Models
             con.Open();
             /*You can't just delete the circle you must delte all the posts and comments and shiecks_links and participant_links asosiated with it*/
 
-                string query = "DELETE FROM Memorization_Circles WHERE Name = @name";
+                string query = @"
+DELETE Admin_Sheikhs_Circles WHERE Circle_ID IN (SELECT Circle_ID from Memorization_Circles WHERE Name = @name);
+DELETE Comments WHERE announcement_ID IN (SELECT announcement_ID from Announcment where Circle_ID IN (SELECT Circle_ID from Memorization_Circles WHERE Name = @name));
+DELETE Announcment WHERE Circle_ID IN (SELECT Circle_ID from Memorization_Circles WHERE Name = @name);
+UPDATE Exams set Circle_ID = null where Circle_ID IN (SELECT Circle_ID from Memorization_Circles WHERE Name = @name);
+DELETE Participant_Circle_Attend WHERE Circle_ID IN (SELECT Circle_ID from Memorization_Circles WHERE Name = @name);
+DELETE FROM Memorization_Circles WHERE Name = @name;
+";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@name", name);
                 cmd.ExecuteNonQuery();
@@ -1650,6 +1644,206 @@ namespace Quran_Memorizing_System.Models
             {
                 con.Close();
             }
+            return dt;
+        }
+
+        public List<int> getstatisitcs()
+        {
+            List<int> res = new List<int> { };
+
+            try
+            {
+                DataTable dt = new DataTable();
+                con.Open();
+                string query = @"SELECT 
+                                (SELECT COUNT(*) FROM Participants) AS ParticipantCount,
+                                (SELECT COUNT(*) FROM Exams) AS ExamCount,
+                                (SELECT COUNT(*) FROM Memorization_Circles) AS CircleCount,
+                                (SELECT COUNT(*) FROM Sessions) AS SessionCount;";
+                SqlCommand cmd = new SqlCommand(query, con);
+                dt.Load(cmd.ExecuteReader());
+                res.Add(Convert.ToInt32(dt.Rows[0]["ParticipantCount"]));
+                res.Add(Convert.ToInt32(dt.Rows[0]["CircleCount"]));
+                res.Add(Convert.ToInt32(dt.Rows[0]["ExamCount"]));
+                res.Add(Convert.ToInt32(dt.Rows[0]["SessionCount"]));
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return res;
+        }
+
+        public bool addadmin(string email, string name, string password)
+        {
+            bool status = false;
+            try
+            {
+                con.Open();
+                string query = "INSERT INTO Admins (Email, UserName, Password) VALUES (@email, @name, @password)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email.ToLower());
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@password", BCrypt.Net.BCrypt.HashPassword(password));
+
+                cmd.ExecuteNonQuery();
+                status = true;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return status;
+        }
+
+
+        public DataTable getalladmins()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM ADMINS";
+                SqlCommand cmd = new SqlCommand(query, con);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
+
+        public bool delteadmin(string email)
+        {
+            bool status = false;
+            try
+            {
+                con.Open();
+                string query = "DELETE FROM ADMINS WHERE email=@email";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.ExecuteNonQuery();
+                status = true;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return status;
+        }
+
+        public List<User> getallusers()
+        {
+            List<User> res = new List<User> { };
+            try
+            {
+                con.Open();
+                DataTable dt = new DataTable();
+                string query = "SELECT TOP(25) * FROM Participants LIMIT ";
+                SqlCommand cmd = new SqlCommand(query, con);
+                dt.Load(cmd.ExecuteReader());
+                foreach (DataRow user in dt.Rows)
+                {
+                    User u = new User();
+                    u.Email = Convert.ToString(user["Email"]);
+                    u.UserName = Convert.ToString(user["UserName"]);
+                    u.gender = Convert.ToString(user["Gender"]);
+                    u.PhoneNumber = Convert.ToInt32(user["Phone"]);
+                    u.PhoneVisability = Convert.ToBoolean(user["Phonevisability"]);
+                    u.DateOfBirth = Convert.ToString(user["DateofBirth"]);
+                    u.isverified = true;
+                    u.role = "Participant";
+                    res.Add(u);
+                }
+
+                query = "SELECT TOP(25) * FROM Sheikhs";
+                cmd = new SqlCommand(query, con);
+                dt.Clear();
+                dt.Load(cmd.ExecuteReader());
+                foreach (DataRow user in dt.Rows)
+                {
+                    User u = new User();
+                    u.Email = Convert.ToString(user["Email"]);
+                    u.UserName = Convert.ToString(user["UserName"]);
+                    u.gender = Convert.ToString(user["Gender"]);
+                    u.PhoneNumber = Convert.ToInt32(user["Phone"]);
+                    u.PhoneVisability = Convert.ToBoolean(user["Phonevisability"]);
+                    u.DateOfBirth = Convert.ToString(user["DateofBirth"]);
+                    u.role = "Sheikh";
+                    u.isverified = Convert.ToBoolean(user["isverifed"]);
+                    res.Add(u);
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return res;
+        }
+
+        public DataTable getallciruels()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Memorization_Circles JOIN Admin_Sheikhs_Circles on Admin_Sheikhs_Circles.Circle_ID = Memorization_Circles.ID; ";
+                SqlCommand cmd = new SqlCommand(query, con);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
+
+        public DataTable getallexams()
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM Exams";
+                SqlCommand cmd = new SqlCommand(query, con);
+                dt.Load(cmd.ExecuteReader());
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
             return dt;
         }
     }
