@@ -932,7 +932,7 @@ namespace Quran_Memorizing_System.Models
                 }
                 else
                 {
-                    query = "UPDATE Exams SET PublicAvailablity=@publicav, starttime=@stime, endtime=@etime, examduration=@examdur, Sheikh_email=@email, Circle_ID=@cid, Title=@title, IsDraft=@isdraft";
+                    query = "UPDATE Exams SET PublicAvailablity=@publicav, starttime=@stime, endtime=@etime, examduration=@examdur, Sheikh_email=@email, Circle_ID=@cid, Title=@title, IsDraft=@isdraft WHERE Title=@title";
                 }
 
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -1016,7 +1016,8 @@ namespace Quran_Memorizing_System.Models
             try
             {
                 con.Open();
-                string query = "SELECT Title, starttime, endtime, IsDraft  FROM Exams WHERE Sheikh_email = @email";
+
+                string query = "SELECT Exam_ID, Title, starttime, endtime, IsDraft FROM Exams WHERE Sheikh_email = @email";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@email", email);
                 data.Load(cmd.ExecuteReader());
