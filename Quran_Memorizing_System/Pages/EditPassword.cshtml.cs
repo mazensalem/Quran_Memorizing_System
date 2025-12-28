@@ -44,8 +44,16 @@ namespace Quran_Memorizing_System.Pages
                 return Page();
             }
             
-            db.changepassword(HttpContext.Session.GetString("email"), HttpContext.Session.GetString("role"), oldpassword, newpassword);
-            return RedirectToPage("/Profile");
+            if (db.changepassword(HttpContext.Session.GetString("email"), HttpContext.Session.GetString("role"), oldpassword, newpassword))
+            {
+                TempData["SuccessMessage"] = "Password changed successfully.";
+                return RedirectToPage("/Profile");
+            }
+            else
+            {
+                ModelState.AddModelError("oldpassword", "This password is incorrect");
+                return Page();
+            }
         }
     }
 }
