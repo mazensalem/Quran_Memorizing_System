@@ -74,26 +74,29 @@
                     </div>
                 </form>
             </div>
-        }
-    </div>
-
-    <!-- notifications -->
-    <div class="col-md-2 m-4">
-        <div class="p-3 notifications-card">
-            <h5 class="fw-bold mb-3">Notifications</h5>
-
-            @foreach (var noti in Model.Notifications)
-            {
-                <div class="d-flex mb-2 notification-item">
-                    <div class="me-2">
-                        <i class="bi bi-bell text-primary fs-5"></i>
-                    </div>
-                    <div>
-                        <p class="mb-1 fw-semibold">@noti.Message</p>
-                        <small class="text-muted">@noti.TimeAgo</small>
+            <!-- View Created Exams -->
+            <div class="col-md-2 m-4">
+                <div class="p-3 notifications-card">
+                    <div class="mt-3 d-flex justify-content-center">
+                        <a asp-page="/ViewCreatedExams" class="btn btn-outline-secondary">
+                            View Created Exams
+                        </a>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
+        @if (HttpContext.Session.GetString("email") != null)
+        {            
+            <div class="col-md-2 m-4">
+                <div class="p-3 notifications-card">
+                    <div class="mt-3 d-flex justify-content-center">
+                        <a asp-page="/all_performance" class="btn btn-outline-secondary">
+                            Show All Performance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
     </div>
 </div>

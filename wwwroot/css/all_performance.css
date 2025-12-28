@@ -1,0 +1,142 @@
+/* Styles for all_performance page - Bootstrap-first visual layer */
+
+/* Page container */
+.performance-page {
+    max-width: 980px;
+    margin: 1.5rem auto 3rem;
+}
+
+/* Title */
+.page-title {
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Toolbar card */
+.toolbar-card {
+    border-radius: 0.9rem;
+    border: 1px solid #e8eef3;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.search-group .form-control {
+    border-radius: 0.45rem 0 0 0.45rem;
+}
+
+.filter-select {
+    min-width: 110px;
+}
+
+/* Main performance card */
+.performance-card {
+    border-radius: 0.9rem;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(15,23,42,0.08);
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+}
+
+/* Table */
+.performance-table {
+    border-collapse: separate;
+    margin-bottom: 0;
+}
+
+.performance-table thead th {
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #eef2f6;
+    vertical-align: middle;
+    padding: 0.85rem 1rem;
+}
+
+.performance-table tbody td {
+    padding: 0.85rem 1rem;
+    color: #495057;
+    vertical-align: middle;
+    border-top: 1px solid #f3f4f6;
+}
+
+/* Rating block */
+.perf-rating {
+    gap: 0.4rem;
+}
+
+.rating-number {
+    min-width: 22px;
+    text-align: center;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* Stars */
+.rating-stars .star {
+    font-size: 1rem;
+    color: #d1d5db; /* empty */
+    margin-right: 4px;
+    vertical-align: text-bottom;
+}
+
+.rating-stars .star.filled {
+    color: #ffc107; /* filled star color */
+}
+
+/* Row hover */
+.performance-table tbody tr:hover {
+    background-color: #fbfcfd;
+}
+
+/* Pagination area */
+.performance-card .pagination .page-link {
+    color: #374151;
+}
+
+/* Responsive: stacked cards at small widths */
+@media (max-width: 576px) {
+    .performance-page {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .toolbar-card .card-body {
+        padding: 0.75rem;
+    }
+
+    .performance-table thead {
+        display: none;
+    }
+
+    .performance-table tbody tr {
+        display: block;
+        border: 1px solid #eef2f6;
+        border-radius: 0.75rem;
+        margin-bottom: 0.7rem;
+        padding: 0.5rem;
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(15,23,42,0.04);
+    }
+
+    .performance-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0.45rem;
+        border: none;
+    }
+
+    /* Use data-label attribute as label on small screens */
+    .performance-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #374151;
+        margin-right: 0.6rem;
+        flex: 1;
+        text-align: left;
+    }
+
+    .perf-rating {
+        justify-content: flex-end;
+    }
+}

@@ -906,13 +906,29 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
         }
         ////////////////////
 
+
         public bool createExam(Exam exam)
         {
             bool status = false;
             try
             {
                 con.Open();
-                string query = "INSERT INTO Exams(PublicAvailablity, starttime, endtime, examduration, Sheikh_email, Circle_ID, Title) VALUES (@publicav, @stime, @etime, @examdur, @email, @cid, @title);";
+
+                string querytemp = "SELECT Count(*) from exams where Title = @title";
+                SqlCommand cmdtemp = new SqlCommand(querytemp, con);
+                cmdtemp.Parameters.AddWithValue("@title", exam.Title);
+                int number = Convert.ToInt32(cmdtemp.ExecuteScalar());
+
+                string query = "";
+                if (number == 0)
+                {
+                    query = "INSERT INTO Exams(PublicAvailablity, starttime, endtime, examduration, Sheikh_email, Circle_ID, Title, IsDraft) VALUES (@publicav, @stime, @etime, @examdur, @email, @cid, @title, @isdraft);";
+                }
+                else
+                {
+                    query = "UPDATE Exams SET PublicAvailablity=@publicav, starttime=@stime, endtime=@etime, examduration=@examdur, Sheikh_email=@email, Circle_ID=@cid, Title=@title, IsDraft=@isdraft WHERE Title=@title";
+                }
+
                 SqlCommand cmd = new SqlCommand(query, con);
 
                 cmd.Parameters.AddWithValue("@publicav", exam.PublicAvailabilty);
@@ -929,19 +945,20 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
                     _ = cmd.Parameters.AddWithValue("@cid", DBNull.Value);
                 }
                 cmd.Parameters.AddWithValue("@title", exam.Title);
+                cmd.Parameters.AddWithValue("@isdraft", exam.IsDraft);
                 cmd.ExecuteNonQuery();
 
                 int examid = 0;
                 string temp = "SELECT Exam_ID FROM Exams WHERE Title = @title";
-                SqlCommand cmdtemp = new SqlCommand(temp, con);
-                cmdtemp.Parameters.AddWithValue("@title", exam.Title);
-                examid = (int)cmdtemp.ExecuteScalar();
+                SqlCommand cmdtemp3 = new SqlCommand(temp, con);
+                cmdtemp3.Parameters.AddWithValue("@title", exam.Title);
+                examid = (int)cmdtemp3.ExecuteScalar();
 
                 foreach (var question in exam.Questions)
                 {
                     string query1 = "INSERT INTO Questions(Title, Exam_ID, QType) VALUES (@Title, @Exam_ID, @QType)";
                     SqlCommand cmd1 = new SqlCommand(query1, con);
-                    
+
                     cmd1.Parameters.AddWithValue("@Title", question.Title);
                     cmd1.Parameters.AddWithValue("@Exam_ID", examid);
                     cmd1.Parameters.AddWithValue("@QType", question.Type);
@@ -993,7 +1010,8 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
             try
             {
                 con.Open();
-                string query = "SELECT Exam_ID, Title FROM Exams WHERE Sheikh_email = @email";
+
+                string query = "SELECT Exam_ID, Title, starttime, endtime, IsDraft FROM Exams WHERE Sheikh_email = @email";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@email", email);
                 data.Load(cmd.ExecuteReader());
@@ -1327,7 +1345,7 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
             {
                 con.Open();
                 DataTable dt = new DataTable();
-                string query = "SELECT * FROM Exams WHERE Title = @ename";
+                string query = "SELECT * FROM Exams WHERE Title = @ename and IsDraft = 0";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@ename", examname);
                 dt.Load(cmd.ExecuteReader());
@@ -1592,13 +1610,13 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
             try
             {
                 con.Open();
-                string query = "SELECT * FROM Exams WHERE PublicAvailabilty = 1 OR Circle_ID IN (SELECT Circle_ID FROM Participant_Circle_Attend WHERE Participant_Email = @email)";
+                string query = "select * from Exams WHERE (PublicAvailablity = 1) or (Circle_ID in ( select Circle_ID from Participant_Circle_Attend where Participant_Email = @email))";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@email", email);
                 dt.Load(cmd.ExecuteReader());
             }
             catch
-            {
+            { 
             }
             finally
             {

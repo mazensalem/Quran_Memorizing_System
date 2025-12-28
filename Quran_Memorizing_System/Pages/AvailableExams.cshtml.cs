@@ -7,7 +7,7 @@ namespace Quran_Memorizing_System.Pages
 {
     public class AvailableExamsModel : PageModel
     {
-        private readonly DB _db;
+        private readonly DB _db ;
         public DataTable AvailableExams { get; set; }
 
         public AvailableExamsModel(DB db)
@@ -22,11 +22,13 @@ namespace Quran_Memorizing_System.Pages
             {
                 return RedirectToPage("/Login_Page");
             }
+            else
+            {
+                string email = HttpContext.Session.GetString("email");
+                AvailableExams = _db.getAvailableExams(email);
 
-            string email = HttpContext.Session.GetString("email");
-            AvailableExams = _db.getAvailableExams(email);
-
-            return Page();
+                return Page();
+            }
         }
     }
 }

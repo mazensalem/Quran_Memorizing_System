@@ -1,0 +1,100 @@
+/* Styles moved from AvailableExams.cshtml to a separate file for reuse */
+.exams-wrapper { gap: 1rem; }
+.exam-card {
+    width: 100%;
+    max-width: 520px;
+    border-left: 4px solid #0d6efd;
+    text-decoration: none;
+    color: inherit;
+}
+.exam-card .exam-card-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    color: #0d6efd;
+    font-size: 1.2rem;
+}
+.exam-card .card-body {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+}
+.exam-meta {
+    font-size: .9rem;
+    color: #6c757d;
+}
+.exam-actions {
+    display: flex;
+    gap: .5rem;
+    margin-top: .75rem;
+    align-items: center;
+}
+.public-badge {
+    background: #e7f1ff;
+    color: #0d6efd;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: .5rem;
+}
+.private-badge {
+    background: #f8d7da;
+    color: #a71d2a;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: .5rem;
+}
+.exams-list { display:flex; flex-wrap:wrap; }
+.filters-panel { min-width: 220px; }
+
+/* Available exams table styling — aligns with existing Home page look */
+
+.card.exam-card {
+    border-left: 4px solid #0d6efd;
+}
+
+#examsTable thead th {
+    vertical-align: middle;
+    font-weight: 600;
+    color: #212529;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+}
+
+#examsTable tbody td {
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+#examsTable .btn-sm {
+    padding: 0.28rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.notifications-card {
+    background: #ffffff;
+    border-radius: 6px;
+}
+
+.filters-panel {
+    min-width: 220px;
+}
+
+/* subtle hover on rows */
+#examsTable tbody tr:hover {
+    background-color: rgba(13,110,253,0.03);
+}
+
+/* make badges consistent */
+#examsTable .badge {
+    font-weight: 600;
+    padding: .35rem .6rem;
+    border-radius: 999px;
+}
+
+/* responsive tweaks */
+@media (max-width: 767px) {
+    .exams-list { justify-content: center; }
+    .filters-panel { display:none; }
+    #examsTable th:nth-child(3), #examsTable td:nth-child(3) { display: none; } /* hide End time on small screens */
+}

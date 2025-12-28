@@ -1,23 +1,49 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.all_performanceModel
 @{
-	@using System.Data
+    @using System.Data
 }
-
-
-<p class="text-center fs-4 mb-3">All Performance</p>
-
-@for (int i = 0; i < Model.submission.Rows.Count; i++)
-{
-    <p class="p-3 mb-2 border rounded shadow-sm" style="background-color:#ffffff; color:#212529;">
-        Exam title: @Model.Examtitles[i]
-    </p>
-
-    <p class="p-3 mb-2 border rounded shadow-sm" style="background-color:#f8f9fa; color:#495057;">
-        Rating: @Model.submission.Rows[i]["Rating"]
-    </p>
-
-    <p class="p-3 mb-4 border rounded shadow-sm" style="background-color:#f8f9fa; color:#6c757d;">
-        Sheikh Email: @Model.submission.Rows[i]["Sh_Email"]
-    </p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/all_performance.css" asp-append-version="true" />
 }
+    <div class="container performance-page my-4">
+        <header class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="page-title mb-0">All Performance</h4>
+                <small class="text-muted">Overview of submissions and ratings</small>
+            </div>
+            <div>
+                <a class="btn btn-sm btn-outline-secondary" href="#">Back</a>
+            </div>
+        </header>
+
+        <!-- Table -->
+        <div class="card performance-card mb-4">
+            <div class="table-responsive">
+                <table class="table performance-table mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Exam Title</th>
+                            <th class="text-center" style="width:220px">Rating</th>
+                            <th>Sheikh Email</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    @for (int i=0; i < Model.submission.Rows.Count ;i++)
+                                   {
+                            <tr>
+                            <td data-label="Exam Title" class="fw-semibold">@Model.Examtitles[i]</td>
+                                <td data-label="Rating" class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center perf-rating">
+                                        <div class="rating-number me-3 text-muted">@Model.submission[i][0]</div>
+                                    </div>
+                                </td>
+                                <td data-label="Sheikh Email">@Model.submission[i]["Sh_Email"]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

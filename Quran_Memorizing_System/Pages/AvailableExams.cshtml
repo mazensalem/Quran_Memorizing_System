@@ -2,42 +2,133 @@
 @model Quran_Memorizing_System.Pages.AvailableExamsModel
 @{
     ViewData["Title"] = "Available Exams";
+    @using System.Data;
 }
 
-<div class="container mt-5">
-    <h2>Available Exams</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Duration (mins)</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.AvailableExams.Rows.Count > 0)
-            {
-                foreach (System.Data.DataRow row in Model.AvailableExams.Rows)
-                {
-                    <tr>
-                        <td>@row["Title"]</td>
-                        <td>@row["starttime"]</td>
-                        <td>@row["endtime"]</td>
-                        <td>@row["examduration"]</td>
-                        <td>
-                            <a asp-page="/Exam" asp-route-id="@row["Exam_ID"]" class="btn btn-primary">Start Exam</a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="5" class="text-center">No exams available at the moment.</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@section Styles {
+    <link rel="stylesheet" href="~/css/available-exams.css" />
+    <!-- DataTables + Bootstrap 5 styling -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+}
+
+<div class="d-flex flex-row justify-content-between home-layout mt-4">
+    <div class="d-flex flex-column col-md-9">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="mb-0">Available Exams</h2>
+            <small class="text-muted">@Model.AvailableExams.Rows.Count item(s)</small>
+        </div>
+
+        @if (Model.AvailableExams.Rows.Count == 0)
+        {
+            <div class="alert alert-info">No exams available at the moment.</div>
+        }
+        else
+        {
+            <div class="card shadow-sm mb-3">
+                <div class="card-body p-2">
+                    <div class="table-responsive">
+                        <table id="examsTable" class="table table-striped table-bordered align-middle mb-0" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Duration</th>
+                                    <th>Availability</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (DataRow row in Model.AvailableExams.Rows)
+                                {
+                                    var start = row["starttime"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["starttime"]);
+                                    var end = row["endtime"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["endtime"]);
+                                    bool isPublic = false;
+                                    if (row.Table.Columns.Contains("PublicAvailablity"))
+                                    {
+                                        isPublic = row["PublicAvailablity"] != DBNull.Value && Convert.ToInt32(row["PublicAvailablity"]) == 1;
+                                    }
+                                    <tr>
+                                        <td class="fw-semibold">@row["Title"]</td>
+                                        <td>
+                                            @if (start.HasValue) { @start.Value.ToString("g") } else { <em class="text-muted">Not set</em> }
+                                        </td>
+                                        <td>
+                                            @if (end.HasValue) { @end.Value.ToString("g") } else { <em class="text-muted">Not set</em> }
+                                        </td>
+                                        <td>@row["examduration"] mins</td>
+                                        <td>
+                                            @if (isPublic)
+                                            {
+                                                <span class="badge bg-info text-dark">Public</span>
+                                            }
+                                            else if (!row.IsNull("Circle_ID"))
+                                            {
+                                                <span class="badge bg-secondary">Circle</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-muted">—</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-page="/Exam" asp-route-examid="@row["Exam_ID"]" class="btn btn-sm btn-primary">Start</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-2 m-3 filters-panel">
+        <div class="p-3 notifications-card shadow-sm">
+            <h5 class="fw-bold mb-3">Info</h5>
+            <p class="mb-2 text-muted small">
+                Exams open according to their scheduled times. Click "Start" when the exam is active.
+            </p>
+            <hr />
+            <h6 class="mb-2">Tips</h6>
+            <ul class="small text-muted">
+                <li>Make sure your time zone is correct.</li>
+                <li>Exam duration starts when you begin.</li>
+                <li>Contact your sheikh if you have issues.</li>
+            </ul>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <!-- jQuery + DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#examsTable').DataTable({
+                responsive: true,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                pageLength: 10,
+                order: [[1, 'asc']], // order by Start column
+                columnDefs: [
+                    { orderable: false, targets: -1 }, // disable ordering on Action
+                    { className: "text-center", targets: -1 }
+                ],
+                language: {
+                    searchPlaceholder: "Search exams...",
+                    search: ""
+                }
+            });
+
+            // move the search input into bootstrap form style (optional)
+            $('#examsTable_filter input').addClass('form-control form-control-sm').attr('placeholder', 'Search exams...');
+            $('#examsTable_length select').addClass('form-select form-select-sm');
+        });
+    </script>
+}
