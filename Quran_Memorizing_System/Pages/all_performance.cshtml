@@ -1,12 +1,53 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.all_performanceModel
+@using System.Data
+
 @{
-	@using System.Data
+    ViewData["Title"] = "All Performance";
 }
 
-@for (int i=0;i<Model.submission.Rows.Count;i++)
-{
-	<p>Rating: @Model.submission.Rows[i]["Rating"]</p>
-	<p>Exam titel: @Model.Examtitles[i]</p>
-	<p>Sheikh Email: @Model.submission.Rows[i]["Sh_Email"]</p>
-}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">All Performance</h2>
+                <hr class="border-dark mx-auto" style="width: 60px;">
+            </div>
+
+            @if (Model.submission?.Rows.Count > 0)
+            {
+                @for (int i = 0; i < Model.submission.Rows.Count; i++)
+                {
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-1 fw-bold text-primary">@Model.Examtitles[i]</h5>
+                                <span class="badge bg-success">Rated</span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block mb-1">Rating</small>
+                                    <div class="d-flex align-items-center">
+                                        <span class="h5 fw-semibold mb-0 me-2">@Model.submission.Rows[i]["Rating"]</span>
+                                        <span class="text-muted">/100</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block mb-1">Sheikh Email</small>
+                                    <p class="mb-0">@Model.submission.Rows[i]["Sh_Email"]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <p class="text-muted fs-5">No performance records found.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

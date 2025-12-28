@@ -47,7 +47,7 @@ namespace Quran_Memorizing_System.Pages
                 HttpContext.Session.SetString("name", Convert.ToString(res.Rows[0]["UserName"]));
 
                 TempData["SuccessMessage"] = "Log IN Successful.";
-                return RedirectToPage("/Profile");
+                return RedirectToPage("/Home");
             }
             else
             {

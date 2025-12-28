@@ -39,16 +39,24 @@
                     <!-- Profile dropdown: opens sign in / sign up choices -->
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary profile-btn d-flex align-items-center justify-content-center dropdown-toggle"
-                                type="button"
-                                id="profileDropdown"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                        type="button"
+                        id="profileDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
                             <i class="bi bi-person"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             @if (isLoggedIn)
                             {
                                 <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                                @if (role)
+                                {
+                                    <li><a class="dropdown-item" href="/create_performance">Create Performance</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" href="/all_performance">My Perfromance</a></li>
+                                }
                                 <li><a class="dropdown-item" href="/logout">Log out</a></li>
 
                             }

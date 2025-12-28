@@ -1,18 +1,60 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.create_performanceModel
 @{
+    ViewData["Title"] = "Enter Grades";
 }
 
-@foreach (var question in Model.questions)
-{
-	<p>Question: @question.Key</p>
-	<p>Answer: @question.Value</p>
-	<hr />
-}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Main Card -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white text-center pb-3">
+                    <h2 class="fw-bold mb-1">Enter Grades</h2>
+                    <hr class="border-dark" style="width: 50px; margin: 0 auto;">
+                </div>
 
-<form method="post">
-	<h3>enter a grade for this student</h3>
-	<input asp-for="@Model.grade" />
-	<input asp-for="@Model.subid" type="hidden" />
-	<button type="submit">Grade</button>
-</form>
+                <div class="card-body p-4">
+                    <!-- Questions Display -->
+                    @foreach (var question in Model.questions)
+                    {
+                        <div class="mb-3">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <strong>Question:</strong> @question.Key
+                            </div>
+                            <div class="p-3 bg-white rounded-3 border mt-2">
+                                <strong>Answer:</strong> @question.Value
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Grade Form -->
+                    <form method="post" class="mt-4">
+                        <div class="mb-3">
+                            <label for="grade" class="form-label fw-semibold">Enter a grade for this student</label>
+                            <input asp-for="@Model.grade"
+                                   class="form-control form-control-lg rounded-3"
+                                   id="grade"
+                                   placeholder="e.g., 85"
+                                   min="0"
+                                   max="100"
+                                   required />
+                            <span asp-validation-for="@Model.grade" class="text-danger"></span>
+                        </div>
+
+                        <input asp-for="@Model.subid" type="hidden" />
+
+                        <button type="submit"
+                                class="btn btn-dark w-100 py-2 rounded-3 fw-bold">
+                            Grade
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
