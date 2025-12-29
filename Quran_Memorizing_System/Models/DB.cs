@@ -263,7 +263,7 @@ namespace Quran_Memorizing_System.Models
             bool status = false;
             string table = "";
             if (type == "Participant") { table = "Participants"; }
-            else { table = "Sheikhs"; }
+            else { table = "Sheikh"; }
             string query = $"DELETE {table} WHERE Email = @email";
             DataTable res = new DataTable();
             try
@@ -1362,6 +1362,7 @@ namespace Quran_Memorizing_System.Models
                 con.Open();
                 DataTable dt = new DataTable();
                 string query = "SELECT * FROM Exam_Submissions WHERE Exam_Sub_ID = @id and Submited = 0";
+
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@id", exam_sub_id);
                 dt.Load(cmd.ExecuteReader());
@@ -1634,6 +1635,29 @@ namespace Quran_Memorizing_System.Models
                 con.Close();
             }
             return dt;
+        }
+
+        public bool LessonUrlExists(string url)
+        {
+            bool exists = false;
+            try
+            {
+                con.Open();
+                string query = "SELECT COUNT(*) FROM Lessons WHERE Url = @url";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@url", url);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                exists = count > 0;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return exists;
         }
     }
 }
