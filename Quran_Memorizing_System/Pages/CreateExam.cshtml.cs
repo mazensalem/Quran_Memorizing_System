@@ -146,7 +146,7 @@ namespace Quran_Memorizing_System.Pages
             }
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPostSave()
         {
             if (!ModelState.IsValid)
             {
@@ -178,6 +178,7 @@ namespace Quran_Memorizing_System.Pages
             exam.Sheikh_email = HttpContext.Session.GetString("email");
             exam.PublicAvailabilty = PublicAvailability;
             exam.Title = ExamTitle;
+            exam.IsDraft = false;
 
             if (db.Examnameexists(exam.Title))
             {
@@ -197,15 +198,97 @@ namespace Quran_Memorizing_System.Pages
                         });
                     }
                 }
-
                 return Page();
             }
 
+            if (db.createExam(exam))
+            {
+                
+                TempData["SuccessMessage"] = "Exam created successfully!";
+                return RedirectToPage("/Home");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Something went wrong";
+                return RedirectToPage("/CreateExam");
+            }
+        }
+
+
+        public IActionResult OnPostDraft()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Repopulate circles list for dropdown
+                setuser();
+                if (!String.IsNullOrEmpty(user.Email) && !String.IsNullOrEmpty(user.role))
+                {
+                    DataTable circlesTable = db.getusercirules(user.Email, user.role);
+                    UserCircles = new List<CircleOption>();
+
+                    foreach (DataRow row in circlesTable.Rows)
+                    {
+                        UserCircles.Add(new CircleOption
+                        {
+                            ID = Convert.ToInt32(row["ID"]),
+                            Name = Convert.ToString(row["Name"])
+                        });
+                    }
+                }
+                return Page();
+            }
+
+            Exam exam = new Exam();
+            exam.Circle_ID = CircleID;
+            exam.starttime = StartTime;
+            exam.endtime = EndTime;
+            exam.Questions = Questions;
+            exam.examduration = ExamDuration;
+            exam.Sheikh_email = HttpContext.Session.GetString("email");
+            exam.PublicAvailabilty = PublicAvailability;
+            exam.Title = ExamTitle;
+            exam.IsDraft = true;
+
+            if (db.Examnameexists(exam.Title))
+            {
+                ModelState.AddModelError("ExamTitle", "This name is already taken");
+
+                if (!String.IsNullOrEmpty(user.Email) && !String.IsNullOrEmpty(user.role))
+                {
+                    DataTable circlesTable = db.getusercirules(user.Email, user.role);
+                    UserCircles = new List<CircleOption>();
+
+                    foreach (DataRow row in circlesTable.Rows)
+                    {
+                        UserCircles.Add(new CircleOption
+                        {
+                            ID = Convert.ToInt32(row["ID"]),
+                            Name = Convert.ToString(row["Name"])
+                        });
+                    }
+                }
+                return Page();
+            }
 
             if (db.createExam(exam))
             {
-                TempData["SuccessMessage"] = "Exam created successfully!";
-                return RedirectToPage("/Home");
+                setuser();
+                if (!String.IsNullOrEmpty(user.Email) && !String.IsNullOrEmpty(user.role))
+                {
+                    DataTable circlesTable = db.getusercirules(user.Email, user.role);
+                    UserCircles = new List<CircleOption>();
+
+                    foreach (DataRow row in circlesTable.Rows)
+                    {
+                        UserCircles.Add(new CircleOption
+                        {
+                            ID = Convert.ToInt32(row["ID"]),
+                            Name = Convert.ToString(row["Name"])
+                        });
+                    }
+                }
+                TempData["SuccessMessage"] = "Exam saved successfully!";
+                return Page();
             }
             else
             {

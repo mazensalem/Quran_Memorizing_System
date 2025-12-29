@@ -22,7 +22,7 @@ namespace Quran_Memorizing_System.Models
         
         [BindProperty]
         [Required]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         public string Password { get; set; }
         
         [BindProperty]
@@ -40,6 +40,7 @@ namespace Quran_Memorizing_System.Models
         
         [BindProperty]
         [Required]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public string DateOfBirth { get; set; }
 
         [BindProperty]

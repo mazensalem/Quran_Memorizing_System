@@ -95,7 +95,7 @@ namespace Quran_Memorizing_System.Pages
             bool alreadyInCircle = false;
             try
             {
-                exists = db.EmailExists(addmemberemail, "Participant");
+                exists = db.EmailExists(addmemberemail);
                 alreadyInCircle = db.isincircle(addmemberemail, Name);
                 _logger.LogInformation("EmailExists={Exists}, IsInCircle={InCircle}", exists, alreadyInCircle);
             }

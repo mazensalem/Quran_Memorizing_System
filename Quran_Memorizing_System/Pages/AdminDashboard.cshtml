@@ -1,0 +1,328 @@
+﻿@page
+@model Quran_Memorizing_System.Pages.AdminDashboardModel
+@{
+    @using System.Data
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" />
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+
+            <div class="admin-dashboard-wrapper">
+
+                <!-- Header -->
+                <div class="dashboard-header mb-4">
+                    <h2 class="dashboard-title"><i class="bi bi-shield-lock-fill me-2"></i>Admin Dashboard</h2>
+                    <p class="text-muted mb-0">Manage users, circles, and view system statistics</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-users">
+                            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">@Model.Userscount</span>
+                                <span class="stat-label">Total Users</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-circles">
+                            <div class="stat-icon"><i class="bi bi-diagram-3-fill"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">@Model.Circulescount</span>
+                                <span class="stat-label">Circles</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-exams">
+                            <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">@Model.Examcount</span>
+                                <span class="stat-label">Exams</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-sessions">
+                            <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">@Model.Sessioncount</span>
+                                <span class="stat-label">Sessions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Admin Section -->
+                <div class="card admin-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Add New Admin</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-page-handler="Addadmin" class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Name</label>
+                                <input asp-for="@Model.aname" class="form-control" placeholder="Enter user name">
+                                <span class="text-danger" asp-validation-for="@Model.aname"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Email Address</label>
+                                <input asp-for="@Model.aemail" type="email" class="form-control" placeholder="Enter user email">
+                                <span class="text-danger" asp-validation-for="@Model.aemail"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Password</label>
+                                <input asp-for="@Model.apassword" type="password" class="form-control" placeholder="Enter user password">
+                                <span class="text-danger" asp-validation-for="@Model.apassword"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-shield-plus me-1"></i>Add Admin
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- All Admins Section -->
+                <div class="card admin-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-shield-fill me-2"></i>All Admins</h5>
+                        <span class="badge bg-light text-dark">3 Admins</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow admin in Model.admins.Rows)
+                                    {                                        
+                                        <tr>
+                                            <td><i class="bi bi-shield-check me-2 text-success"></i>@admin["UserName"]</td>
+                                            <td>@admin["email"]</td>
+                                            <td>
+                                                <form asp-page-handler="Remove" asp-route-email="@admin["email"]" method="post">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div class="card admin-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>All Users</h5>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-start-0 rounded-end-pill" id="userSearchInput" placeholder="Search by email" onkeyup="filterUsers()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.users)
+                                    {                                        
+                                        <tr>
+                                            <td><i class="bi bi-person-circle me-2"></i>@user.UserName</td>
+                                            <td>@user.Email</td>
+                                            <td><span class="badge bg-primary">@user.role</span></td>
+                                            <td>
+                                                <span class="badge @(user.isverified ? "bg-success" : "bg-warning")"> @(user.isverified ? "verified" : "in process") </span>
+                                            </td>
+                                            <td>
+                                                <form method="post" asp-page-handler="Removeuser" asp-route-email="@user.Email" asp-route-type="@user.role">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Circles Section -->
+                <div class="card admin-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="mb-0"><i class="bi bi-diagram-3-fill me-2"></i>All Circles</h5>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-start-0 rounded-end-pill" id="circleSearchInput" placeholder="Search by name" onkeyup="filterCircles()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="circlesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Circle Name</th>
+                                        <th>Owner</th>
+                                        <th>Visibility</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow circule in Model.circules.Rows)
+                                    {                                        
+                                        <tr>
+                                            <td><i class="bi bi-circle-fill text-success me-2" style="font-size: 0.6rem;"></i>@circule["Name"]</td>
+                                            <td>@circule["Sheikhs_Email"]</td>
+                                            <td><span class="badge @(Convert.ToInt32(circule["Public_Avaliable"]) == 1 ? "bg-success" : "bg-danger")"> @(Convert.ToInt32(circule["Public_Avaliable"]) == 1 ? "Public" : "Private") </span></td>
+                                            <td>
+                                                <form method="post" asp-page-handler="Removecircule" asp-route-name="@circule["Name"]">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exams Section -->
+                <div class="card admin-card">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>All Exams</h5>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-start-0 rounded-end-pill" id="examSearchInput" placeholder="Search by title" onkeyup="filterExams()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="examsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Exam Title</th>
+                                        <th>Created By</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow exam in Model.exams.Rows)
+                                    {                                        
+                                        <tr>
+                                            <td><i class="bi bi-file-text me-2"></i> @exam["Title"] </td>
+                                            <td>@exam["Sheikh_email"]</td>
+                                            <td>@exam["starttime"]</td>
+                                            <td>@exam["endtime"]</td>
+                                            <td>
+                                                <form method="post" asp-page-handler="Deleteexam" asp-route-id="@exam["Exam_ID"]">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterUsers() {
+            const input = document.getElementById('userSearchInput');
+            const filter = input.value.toLowerCase();
+            const usersTable = document.getElementById('usersTable');
+            
+            if (usersTable) {
+                const rows = usersTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const name = row.cells[0]?.textContent.toLowerCase() || '';
+                    const email = row.cells[1]?.textContent.toLowerCase() || '';
+                    if (name.includes(filter) || email.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function filterCircles() {
+            const input = document.getElementById('circleSearchInput');
+            const filter = input.value.toLowerCase();
+            const circlesTable = document.getElementById('circlesTable');
+            
+            if (circlesTable) {
+                const rows = circlesTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const name = row.cells[0]?.textContent.toLowerCase() || '';
+                    const owner = row.cells[1]?.textContent.toLowerCase() || '';
+                    if (name.includes(filter) || owner.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function filterExams() {
+            const input = document.getElementById('examSearchInput');
+            const filter = input.value.toLowerCase();
+            const examsTable = document.getElementById('examsTable');
+            
+            if (examsTable) {
+                const rows = examsTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const title = row.cells[0]?.textContent.toLowerCase() || '';
+                    const createdBy = row.cells[1]?.textContent.toLowerCase() || '';
+                    if (title.includes(filter) || createdBy.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        }
+    </script>
+}

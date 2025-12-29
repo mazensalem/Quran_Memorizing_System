@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Quran_Memorizing_System.Models
 {
@@ -10,18 +9,15 @@ namespace Quran_Memorizing_System.Models
         public int ExamId { get; set; }
 
         [Required]
-        public string Type { get; set; } // "mcq" or "text"
+        public string Type { get; set; } = string.Empty; // "mcq" or "text"
 
         [Required]
         [StringLength(500)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         // For MCQ questions
-        [BindProperty]
         public virtual ICollection<Choice>? Choices { get; set; }
 
         public string? CorrectAnswerText { get; set; }
-
     }
-
 }

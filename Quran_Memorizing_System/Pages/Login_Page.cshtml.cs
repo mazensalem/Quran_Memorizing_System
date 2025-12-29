@@ -51,7 +51,7 @@ namespace Quran_Memorizing_System.Pages
             }
             else
             {
-                bool foundemail = db.EmailExistsAny(Email);
+                bool foundemail = db.EmailExists(Email);
                 if (foundemail)
                 {
                     ModelState.AddModelError("Password", "This password is not correct");

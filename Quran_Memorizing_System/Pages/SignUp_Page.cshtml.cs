@@ -26,12 +26,12 @@ namespace Quran_Memorizing_System.Pages
                 return Page();
             }
 
-            if (db.PhoneExists(user.PhoneNumber, user.role))
+            if (db.PhoneExists(user.PhoneNumber))
             {
                 ModelState.AddModelError("user.PhoneNumber", "This Phone is already Taken");
                 return Page();
             }
-            if (db.EmailExists(user.Email, user.role)) {
+            if (db.EmailExists(user.Email)) {
                 ModelState.AddModelError("user.Email", "This Email is already Taken");
                 return Page();
             }

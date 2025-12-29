@@ -79,8 +79,8 @@ namespace Quran_Memorizing_System.Pages
                 db.requestsession(HttpContext.Session.GetString("email"), Date, SectionType, 0, 0, SuraText);
             }
 
-            TempData["SucessMassage"] = "You sucessfully requested a session";
-            return RedirectToPage("Home");
+            TempData["SuccessMessage"] = "You sucessfully requested a session";
+            return RedirectToPage("/Home");
         }
     }
 }

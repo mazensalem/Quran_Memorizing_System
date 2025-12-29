@@ -29,12 +29,12 @@
                 </a>
 
                 <ul class="navbar-nav flex-row">
-                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/lessonssearch" ? "active" : "")" asp-page="/LessonsSearch"> Lessons </a></li>
-                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/searchcircuits" ? "active" : "")" asp-page="/SearchCircuits">circles</a></li>
-                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/book_sessions" || currentPath == "/book_sessions/index" || currentPath == "/book_sessions" ? "active" : "")" asp-page="/Book_Sessions">Book Session</a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/lessonssearch" ? "active" : "")" asp-page="/LessonsSearch"> Learn </a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/searchcircuits" ? "active" : "")" asp-page="/SearchCircuits">Attend</a></li>
+                    <li class="nav-item me-3"><a class="nav-link @(currentPath == "/book_sessions" || currentPath == "/book_sessions/index" || currentPath == "/book_sessions" ? "active" : "")" asp-page="/Book_Sessions">Book a Session</a></li>
                     @if (role)
                     {
-                        <li class="nav-item me-3"><a class="nav-link @(currentPath == "/createexam" ? "active" : "")" asp-page="/CreateExam">Create Exam</a></li>
+                        <li class="nav-item me-3"><a class="nav-link @(currentPath == "/createexam" ? "active" : "")" asp-page="/CreateExam">Create an Exam</a></li>
                     }
                 </ul>
 

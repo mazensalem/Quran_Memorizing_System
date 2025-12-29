@@ -4,6 +4,7 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" />
     <style>
         .signup-wrapper {
             max-width: 520px;
@@ -55,6 +56,8 @@
         }
     </style>
 }
+
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-6">
@@ -109,7 +112,8 @@
 
                         <div class="mb-3">
                             <label class="admin-label" for="birthdate">Birth Date</label>
-                            <input type="date" id="birthdate" class="form-control" asp-for="@Model.user.DateOfBirth">
+                            
+                            <input type="text" id="birthdate" class="form-control datepicker" placeholder="dd-mm-yyyy" autocomplete="off" asp-for="@Model.user.DateOfBirth">
                             <br />
                             <span class="invalid-feedback d-block" asp-validation-for="@Model.user.DateOfBirth"></span>
                         </div>
@@ -155,3 +159,16 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+}

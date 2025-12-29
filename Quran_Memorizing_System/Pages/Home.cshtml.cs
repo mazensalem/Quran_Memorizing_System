@@ -52,13 +52,17 @@ namespace Quran_Memorizing_System.Pages
                 var email = HttpContext.Session.GetString("email");
                 DataTable userdt = db.GetUser(email, role);
 
-                user.UserName = Convert.ToString(userdt.Rows[0]["UserName"]);
-                user.PhoneNumber = Convert.ToInt32(userdt.Rows[0]["Phone"]);
-                user.Email = email;
-                user.gender = Convert.ToString(userdt.Rows[0]["Gender"]);
                 user.role = role;
-                user.PhoneVisability = Convert.ToBoolean(userdt.Rows[0]["Phonevisability"]);
-                user.DateOfBirth = Convert.ToDateTime(userdt.Rows[0]["DateofBirth"]).ToShortDateString();
+                user.UserName = Convert.ToString(userdt.Rows[0]["UserName"]);
+                user.Email = email;
+                
+                if (role != "Admin")
+                {
+                    user.PhoneNumber = Convert.ToInt32(userdt.Rows[0]["Phone"]);
+                    user.gender = Convert.ToString(userdt.Rows[0]["Gender"]);
+                    user.PhoneVisability = Convert.ToBoolean(userdt.Rows[0]["Phonevisability"]);
+                    user.DateOfBirth = Convert.ToDateTime(userdt.Rows[0]["DateofBirth"]).ToShortDateString();
+                }
 
                 if (user.gender == "F")
                 {
@@ -72,6 +76,9 @@ namespace Quran_Memorizing_System.Pages
                 if (user.role == "Participant")
                 {
                     user.isverified = false;
+                }else if (user.role == "Admin")
+                {
+                    user.isverified = true;
                 }
                 else
                 {
@@ -105,7 +112,7 @@ namespace Quran_Memorizing_System.Pages
             /*We store role as sheikhs and participants*/
             isAdmin = (user.role == "Sheikh");
         }
-
+        
         public IActionResult OnPostSelectCircle()
         {
             setuser();
@@ -132,6 +139,29 @@ namespace Quran_Memorizing_System.Pages
             return "";
         }
 
+        public IActionResult OnPostAddcircule()
+        {
+            if (db.circuleNameExists(newcirculename))
+            {
+                ModelState.AddModelError("newcirculename", "This name already exists");
+            }
 
+            if (!ModelState.IsValid)
+            {
+                setuser();
+                Circles = db.getusercirules(user.Email, user.role);
+                return Page();
+            }
+
+            if (db.addCircule(newcirculename, ispublic, HttpContext.Session.GetString("email")))
+            {
+                TempData["SuccessMessage"] = "You Added the Circule";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Something is wrong";
+            }
+            return RedirectToPage("/Home");
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Quran_Memorizing_System.Models
@@ -25,8 +26,10 @@ namespace Quran_Memorizing_System.Models
         public int examduration { get; set; } // Duration in minutes
 
         public bool PublicAvailabilty { get; set; }
+        public bool IsDraft { get; set; }
 
         // Navigation property
+        [BindProperty]
         public virtual ICollection<Question> Questions { get; set; }
     }
 }
