@@ -31,10 +31,10 @@ namespace Quran_Memorizing_System.Models
                 string query = "INSERT INTO Sessions (participant_email, session_date, section_type, start_page, end_page, sura_text) values (@pemail, @date, @stype, @spage, @epage, @stext)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@pemail", email);
-                cmd.Parameters.AddWithValue("@date", date);
+                cmd.Parameters.AddWithValue("@date", DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture).ToShortDateString());
                 cmd.Parameters.AddWithValue("@stype", sectionType);
-                cmd.Parameters.AddWithValue("@spage", spage);
-                cmd.Parameters.AddWithValue("@epage", epage);
+                cmd.Parameters.AddWithValue("@spage", (object)spage ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@epage", (object)epage ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@stext", (object)suraText ?? DBNull.Value);
 
                 cmd.ExecuteNonQuery();

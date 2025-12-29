@@ -1,33 +1,72 @@
 ﻿@page
 @model Quran_Memorizing_System.Pages.AdmitSheikhModel
 @{
-	@using System.Data
+    Layout = "_Layout";
+    @using System.Data
 }
 
-<div>
-	<!--Search for Sheikhs-->
-	<form asp-page-handler="Search" method="post">
-		<lable for="NameAndEmailSearch">Enter the name or email you want</lable>
-		<input id="NameAndEmailSearch" asp-for="@Model.SearchInput" />
-		<button type="submit">Search</button>
-	</form>
+<section class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Admit Sheikh</h2>
+        <small class="text-muted">Review and admit or deny Sheikh accounts</small>
+    </div>
 
-	<div>
-		@foreach (var sheikh in Model.Sheikhs.Rows.Cast<DataRow>())
-		{
-			<div>
-				@sheikh["Username"]
-				@sheikh["Email"]
-				<form asp-page-handler="Admit" method="post">
-					<input type="hidden" value="@sheikh["Email"]" name="user" />
-					<button type="submit" class="btn btn-success">Admit</button>
-				</form>
-				<form asp-page-handler="Deny" method="post">
-					<input type="hidden" value="@sheikh["Email"]" name="user" />
-					<button type="submit" class="btn btn-danger">Deny</button>
-				</form>
-			</div>
-			<br />
-		}
-	</div>
-</div>
+    <!-- Search -->
+    <form asp-page-handler="Search" method="post" class="mb-4">
+        <div class="input-group">
+            <input id="NameAndEmailSearch" asp-for="SearchInput" class="form-control" placeholder="Search by name or email" />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+        <span class="text-danger">@Html.ValidationMessageFor(m => m.SearchInput)</span>
+    </form>
+
+    @if (Model.Sheikhs == null || Model.Sheikhs.Rows.Count == 0)
+    {
+        <div class="alert alert-info">
+            No pending sheikhs found.
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header">
+                Pending Sheikhs (@Model.Sheikhs.Rows.Count)
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col" class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow sheikh in Model.Sheikhs.Rows)
+                            {
+                                <tr>
+                                    <td class="align-middle">@sheikh["Username"]</td>
+                                    <td class="align-middle">@sheikh["Email"]</td>
+                                    <td class="align-middle text-end">
+                                        <div class="btn-group" role="group" aria-label="Admit deny">
+                                            <form asp-page-handler="Admit" method="post" class="d-inline">
+                                                <input type="hidden" name="user" value="@(sheikh["Email"])" />
+                                                <button type="submit" class="btn btn-sm btn-success">Admit</button>
+                                            </form>
+
+                                            <form asp-page-handler="Deny" method="post" class="d-inline ms-2">
+                                                <input type="hidden" name="user" value="@(sheikh["Email"])" />
+                                                <button type="submit" class="btn btn-sm btn-danger">Deny</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</section>
