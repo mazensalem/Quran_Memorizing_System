@@ -75,12 +75,20 @@ namespace Quran_Memorizing_System.Pages
             cmd.Parameters.AddWithValue("@t", Title);
             cmd.Parameters.AddWithValue("@l", Location);
             cmd.Parameters.AddWithValue("@a", Availability);
-            cmd.Parameters.AddWithValue("@u", LessonUrl);
+            cmd.Parameters.AddWithValue("@u", (object)LessonUrl ?? "");
             cmd.Parameters.AddWithValue("@id", Lesson_ID);
 
             con.Open();
+            try
+            {
             cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Somethig went wrong.";
+            }
 
+            con.Close();
             return RedirectToPage("/LessonsSearch");
         }
     }

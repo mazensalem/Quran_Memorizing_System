@@ -28,57 +28,9 @@
 @if (Model.role == "Sheikh")
 {
     <div class="mb-3">
-        <h5 class="fw-bold circle-settings-title">Circle Settings</h5>
-
         <div class="row">
-            <!-- LEFT: settings and announcements -->
+            <!-- LEFT: Announcements and Members -->
             <div class="col-md-8">
-                <!-- Edit Circle -->
-                <form method="post" asp-page-handler="UpdateCircle" class="mb-2 circle-edit-form">
-                    <div class="mb-2">
-                        <label class="form-label">Circle Name</label>
-                        <input asp-for="NewCircleName" class="form-control" value="@Model.Name" />
-                    </div>
-
-                    <div class="form-check form-switch mb-3">
-                        <input asp-for="NewPublicAvailable" class="form-check-input" id="publicCheck" />
-                        <label class="form-check-label" for="publicCheck">Public Available</label>
-                    </div>
-
-                    <input asp-for="Name" type="hidden" />
-
-                    <div class="d-flex gap-2 align-items-center">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-
-                        <!-- Delete triggers modal -->
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteModal">
-                            <i class="bi bi-trash"></i> Delete
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Delete Confirmation Modal -->
-                <div class="modal fade" id="ConfirmDeleteModal" tabindex="-1" aria-labelledby="ConfirmDeleteLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="ConfirmDeleteLabel">Delete Circle</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Are you sure you want to delete the circle "<strong>@Model.Name</strong>"? This action cannot be undone.
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <form method="post" asp-page-handler="DeleteCircle" class="mb-0">
-                                    <input asp-for="Name" type="hidden" />
-                                    <button type="submit" class="btn btn-danger">Yes, delete</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- make announcement -->
                 <div class="make-announcement-box mb-3">
                     <form method="post" asp-page-handler="AddAnnouncement" class="d-flex w-100">
@@ -91,6 +43,8 @@
                 <!-- Announcements list -->
                 @for (int i = 0; i < Model.Posts.Rows.Count; i++)
                 {
+                    var annId = Convert.ToInt32(Model.Posts.Rows[i]["Announcment_ID"]);
+                    
                     <div class="announcement-card">
                         <div class="announcement-header">
                             <div class="announcement-avatar"></div>
@@ -109,16 +63,98 @@
                             <input asp-for="Name" type="hidden" />
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
+
+                        <!-- Comments section for Sheikh view -->
+                        <div class="comments-wrapper mt-3">
+                            <h6 class="text-muted"><i class="bi bi-chat-dots"></i> Comments</h6>
+                            @{
+                                DataTable sheikhComments = null;
+                                if (Model.CommentsByAnnouncement != null && Model.CommentsByAnnouncement.ContainsKey(annId))
+                                {
+                                    sheikhComments = Model.CommentsByAnnouncement[annId];
+                                }
+                            }
+
+                            @if (sheikhComments != null && sheikhComments.Rows.Count > 0)
+                            {
+                                @foreach (DataRow c in sheikhComments.Rows)
+                                {
+                                    var cEmail = Convert.ToString(c["participant_email"]);
+                                    var cTime = Convert.ToDateTime(c["time"]);
+
+                                    <div class="comment-item">
+                                        <small class="text-muted">@cEmail</small><br />
+                                        <span>@c["text"]</span>
+                                        <small class="text-muted d-block">@cTime.ToString("g")</small>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted small">No comments yet.</p>
+                            }
+                        </div>
                     </div>
                 }
             </div>
 
-            <!-- RIGHT: members -->
+            <!-- RIGHT: Circle Settings and Members -->
             <div class="col-md-4">
-                <div class="circle-members-card">
+                <div class="circle-settings-card">
+                    <h5 class="fw-bold circle-settings-title mb-3">Circle Settings</h5>
+
+                    <!-- Edit Circle -->
+                    <form method="post" asp-page-handler="UpdateCircle" class="mb-2 circle-edit-form">
+                        <div class="mb-2">
+                            <label class="form-label">Circle Name</label>
+                            <input asp-for="NewCircleName" class="form-control" value="@Model.Name" />
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="NewPublicAvailable" class="form-check-input" id="publicCheck" />
+                            <label class="form-check-label" for="publicCheck">Public Available</label>
+                        </div>
+
+                        <input asp-for="Name" type="hidden" />
+
+                        <div class="d-flex gap-2 align-items-center">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+
+                            <!-- Delete triggers modal -->
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteModal">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="ConfirmDeleteModal" tabindex="-1" aria-labelledby="ConfirmDeleteLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ConfirmDeleteLabel">Delete Circle</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the circle "<strong>@Model.Name</strong>"? This action cannot be undone.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="post" asp-page-handler="DeleteCircle" class="mb-0">
+                                        <input asp-for="Name" type="hidden" />
+                                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Members section -->
+                <div class="circle-members-card mt-4">
                     <h5 class="fw-bold mb-2">MEMBERS</h5>
 
-                    <!-- Add member form (مباشر على السيرفر) -->
+                    <!-- Add member form -->
                     <form method="post" asp-page-handler="Addmember" class="d-flex gap-2 align-items-center mb-2">
                         <input asp-for="addmemberemail" class="form-control" placeholder="member email" />
                         <input asp-for="Name" type="hidden" />
