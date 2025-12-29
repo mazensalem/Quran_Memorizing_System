@@ -11,7 +11,7 @@
     <div class="add-lesson-container">
         <h3 class="add-lesson-title">Add New Lesson</h3>
 
-        <form method="post">
+        <form method="post" id="addLessonForm">
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input type="text" name="Title" class="form-control" required />
@@ -19,7 +19,10 @@
 
             <div class="mb-3">
                 <label class="form-label">Location</label>
-                <input type="text" name="Location" class="form-control" required />
+                <select name="Location" id="locationSelect" class="form-control" required>
+                    <option value="Online" selected>Online</option>
+                    <option value="Offline">Offline</option>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -31,13 +34,19 @@
                 </select>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4" id="urlField">
                 <label class="form-label">Lesson URL</label>
-                <input type="url" name="Lesson_URL" class="form-control" required />
+                <input id="lessonUrlInput" type="url" name="Lesson_URL" class="form-control" required />
+                <div id="urlFeedback" class="text-danger mt-1" style="display:none;"></div>
+            </div>
+
+            <div class="mb-4" id="addressField" style="display: none;">
+                <label class="form-label">Address</label>
+                <input id="addressInput" type="text" name="Address" class="form-control" />
             </div>
 
             <div class="d-flex justify-content-start gap-2 add-lesson-actions">
-                <button type="submit" class="btn btn-success px-4">
+                <button type="submit" class="btn btn-success px-4" id="submitBtn">
                     <i class="bi bi-plus-circle me-1"></i> Add Lesson
                 </button>
                 <a href="/LessonsSearch" class="btn btn-dark px-4">
@@ -47,3 +56,69 @@
         </form>
     </div>
 </div>
+
+<script>
+    (function(){
+        var locationSelect = document.getElementById('locationSelect');
+        var urlField = document.getElementById('urlField');
+        var addressField = document.getElementById('addressField');
+        var urlInput = document.getElementById('lessonUrlInput');
+        var addressInput = document.getElementById('addressInput');
+        var urlFeedback = document.getElementById('urlFeedback');
+        var submitBtn = document.getElementById('submitBtn');
+        var addLessonForm = document.getElementById('addLessonForm');
+
+        function updateFields() {
+            var selected = locationSelect.value;
+            if (selected === 'Online') {
+                urlField.style.display = 'block';
+                addressField.style.display = 'none';
+
+                urlInput.required = true;
+                urlInput.disabled = false;
+
+                addressInput.required = false;
+                addressInput.disabled = true;
+                addressInput.value = '';
+            } else if (selected === 'Offline') {
+                urlField.style.display = 'none';
+                addressField.style.display = 'block';
+
+                urlInput.required = false;
+                urlInput.disabled = true;
+                urlInput.value = '';
+
+                addressInput.required = true;
+                addressInput.disabled = false;
+            }
+        }
+
+        // debounce helper
+        function debounce(fn, delay){
+            var t;
+            return function(){
+                var args = arguments;
+                clearTimeout(t);
+                t = setTimeout(function(){ fn.apply(null, args); }, delay);
+            }
+        }
+
+        
+
+        var debouncedCheck = debounce(function(){ checkUrlUnique(urlInput.value.trim()); }, 400);
+
+        // initialize on load
+        updateFields();
+
+        // wire events
+        locationSelect.addEventListener('change', updateFields);
+        urlInput.addEventListener('input', debouncedCheck);
+
+        // final guard on submit: re-check if submit is enabled; if disabled, prevent submit
+        addLessonForm.addEventListener('submit', function(e){
+            if (submitBtn.disabled) {
+                e.preventDefault();
+            }
+        });
+    })();
+</script>

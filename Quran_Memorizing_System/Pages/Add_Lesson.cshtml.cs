@@ -68,6 +68,18 @@ namespace Quran_Memorizing_System.Pages
             return Page();
         }
 
+        // AJAX endpoint: /Add_Lesson?handler=CheckUrl&url=...
+        public JsonResult OnGetCheckUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return new JsonResult(new { exists = false });
+            }
+
+            bool exists = db.LessonUrlExists(url.Trim());
+            return new JsonResult(new { exists });
+        }
+
         public IActionResult OnPost()
         {
             getuser();
@@ -75,6 +87,13 @@ namespace Quran_Memorizing_System.Pages
             {
                 TempData["ErrorMessage"] = "You are not allowed to add a lesson";
                 return RedirectToPage("/LessonsSearch");
+            }
+
+            // server-side duplicate check
+            if (!string.IsNullOrWhiteSpace(Lesson_URL) && db.LessonUrlExists(Lesson_URL.Trim()))
+            {
+                ModelState.AddModelError("Lesson_URL", "This lesson URL is already in use.");
+                return Page();
             }
 
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
@@ -87,11 +106,14 @@ namespace Quran_Memorizing_System.Pages
           VALUES
           (@Title, @Location, @Availability, @Url, @Instructor)", con);
 
-            cmd.Parameters.AddWithValue("@Title", Title);
-            cmd.Parameters.AddWithValue("@Location", Location);
+            cmd.Parameters.AddWithValue("@Title", Title ?? string.Empty);
+            cmd.Parameters.AddWithValue("@Location", Location ?? string.Empty);
             cmd.Parameters.AddWithValue("@Availability", Availability);
-            cmd.Parameters.AddWithValue("@Url", Lesson_URL);
-            cmd.Parameters.AddWithValue("@Instructor", instructorEmail);
+
+            string urlValue = string.IsNullOrWhiteSpace(Lesson_URL) ? string.Empty : Lesson_URL.Trim();
+            cmd.Parameters.AddWithValue("@Url", urlValue);
+
+            cmd.Parameters.AddWithValue("@Instructor", instructorEmail ?? string.Empty);
 
             con.Open();
             cmd.ExecuteNonQuery();

@@ -1373,6 +1373,7 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
                 con.Open();
                 DataTable dt = new DataTable();
                 string query = "SELECT * FROM Exam_Submissions WHERE Exam_Sub_ID = @id and Submited = 0";
+
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@id", exam_sub_id);
                 dt.Load(cmd.ExecuteReader());
@@ -1647,6 +1648,28 @@ DELETE FROM Memorization_Circles WHERE Name = @name;
             return dt;
         }
 
+        public bool LessonUrlExists(string url)
+        {
+            bool exists = false;
+            try
+            {
+                con.Open();
+                string query = "SELECT COUNT(*) FROM Lessons WHERE Url = @url";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@url", url);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                exists = count > 0;
+              }
+            catch
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return exists;
+        }
         public List<int> getstatisitcs()
         {
             List<int> res = new List<int> { };
